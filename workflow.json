@@ -1,0 +1,123 @@
+{
+  "name": "Anti-AI Cold Outreach Automation Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "cold-outreach-webhook",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "1",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://localhost:8000/api/outreach/generate",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"profile_text\": $json.body.profile_text,\n  \"prospect_name\": $json.body.prospect_name,\n  \"prospect_company\": $json.body.prospect_company,\n  \"prospect_role\": $json.body.prospect_role,\n  \"tone\": $json.body.tone || 'Casual & Direct',\n  \"goal\": $json.body.goal || 'Book a 15-min discovery call',\n  \"value_proposition\": $json.body.value_proposition || 'Cut cloud compute costs by 52%',\n  \"enable_web_research\": true,\n  \"enable_rag\": true\n}"
+      },
+      "id": "2",
+      "name": "FastAPI ColdReach Agent Engine",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.anti_ai_score }}",
+              "operation": "largerEqual",
+              "value2": 85
+            }
+          ]
+        }
+      },
+      "id": "3",
+      "name": "Anti-AI Quality Gate",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [720, 300]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "application": "appXXXXXXXX",
+        "table": "tblXXXXXXXX",
+        "columns": {
+          "Name": "={{ $json.prospect_name }}",
+          "Company": "={{ $json.prospect_company }}",
+          "Subject": "={{ $json.selected_subject }}",
+          "Email": "={{ $json.email_body }}",
+          "FollowUp1": "={{ $json.followup_1 }}",
+          "FollowUp2": "={{ $json.followup_2 }}",
+          "Score": "={{ $json.anti_ai_score }}"
+        }
+      },
+      "id": "4",
+      "name": "Sync Enriched Outreach to CRM / Airtable",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 1,
+      "position": [960, 200]
+    },
+    {
+      "parameters": {
+        "chatId": "-100XXXXXXXX",
+        "text": "=⚠️ Outreach for {{ $json.prospect_name }} flagged for review (Score: {{ $json.anti_ai_score }}%)"
+      },
+      "id": "5",
+      "name": "Alert SDR / Reviewer",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [960, 420]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "FastAPI ColdReach Agent Engine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FastAPI ColdReach Agent Engine": {
+      "main": [
+        [
+          {
+            "node": "Anti-AI Quality Gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anti-AI Quality Gate": {
+      "main": [
+        [
+          {
+            "node": "Sync Enriched Outreach to CRM / Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alert SDR / Reviewer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
