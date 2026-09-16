@@ -23,36 +23,36 @@ ColdReach.ai employs an asynchronous, unified full-stack architecture combining 
 
 ```mermaid
 graph TD
-    Client([User Browser / Web Client]) -->|HTTP / REST API| Server[Unified FastAPI Web Server]
+    Client([User Browser / Web Client]) -->|HTTP / REST API| Server["Unified FastAPI Web Server"]
 
     subgraph Presentation & Client Layer
-        Server -->|Serves Static Dist / SPA| ViteReact[Vite + React 18 UI\nGlassmorphic Dark Theme]
-        ViteReact -->|State & API Dispatch| ClientStore[Client Service Layer\napi.js]
+        Server -->|Serves Static Dist / SPA| ViteReact["Vite + React 18 UI<br/>Glassmorphic Dark Theme"]
+        ViteReact -->|State & API Dispatch| ClientStore["Client Service Layer<br/>api.js"]
     end
 
     subgraph API & Routing Layer
-        Server --> AuthRouter[/api/auth\nJWT Register/Login]
-        Server --> OutreachRouter[/api/outreach\nSingle Generation]
-        Server --> BatchRouter[/api/batch\nCSV Processing]
-        Server --> RAGRouter[/api/rag\nKnowledge Base]
-        Server --> EvalRouter[/api/evaluation\nLangSmith Metrics]
-        Server --> HistoryRouter[/api/history\nPersisted Logs]
+        Server --> AuthRouter["/api/auth<br/>JWT Register/Login"]
+        Server --> OutreachRouter["/api/outreach<br/>Single Generation"]
+        Server --> BatchRouter["/api/batch<br/>CSV Processing"]
+        Server --> RAGRouter["/api/rag<br/>Knowledge Base"]
+        Server --> EvalRouter["/api/evaluation<br/>LangSmith Metrics"]
+        Server --> HistoryRouter["/api/history<br/>Persisted Logs"]
     end
 
     subgraph Multi-Agent LangGraph Core
-        OutreachRouter & BatchRouter --> Supervisor[Supervisor Router Node]
-        Supervisor --> WebEnricher[DuckDuckGo Web Enrichment Tool]
-        Supervisor --> RAGEngine[RAG Vector Knowledge Base]
-        Supervisor --> Copywriter[Anti-AI Copywriter Node\nMistral mistral-small-latest]
+        OutreachRouter & BatchRouter --> Supervisor["Supervisor Router Node"]
+        Supervisor --> WebEnricher["DuckDuckGo Web Enrichment Tool"]
+        Supervisor --> RAGEngine["RAG Vector Knowledge Base"]
+        Supervisor --> Copywriter["Anti-AI Copywriter Node<br/>Mistral mistral-small-latest"]
         
-        Copywriter --> VariationEngine[Deterministic 4-Angle Variation Engine]
-        VariationEngine --> CriticNode[Anti-AI Deliverability Critic]
-        CriticNode --> FollowupSequencer[Day 3 & Day 7 Bump Generator]
+        Copywriter --> VariationEngine["Deterministic 4-Angle Variation Engine"]
+        VariationEngine --> CriticNode["Anti-AI Deliverability Critic"]
+        CriticNode --> FollowupSequencer["Day 3 & Day 7 Bump Generator"]
     end
 
     subgraph Data & Observability Layer
-        Server --> MongoDB[(MongoDB Atlas Cloud\nUsers, Outreaches, Batches, Docs)]
-        Copywriter -.->|Optional Telemetry| LangSmith[LangSmith Tracing V2 API]
+        Server --> MongoDB[("MongoDB Atlas Cloud<br/>Users, Outreaches, Batches, Docs")]
+        Copywriter -.->|Optional Telemetry| LangSmith["LangSmith Tracing V2 API"]
     end
 ```
 

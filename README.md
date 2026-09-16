@@ -86,29 +86,29 @@ Traditional cold outreach and email tools suffer from severe flaws:
 
 ```mermaid
 graph TD
-    User([User / Web Browser / CSV Upload]) --> UnifiedApp[Unified FastAPI Server :8000 / Port]
+    User([User / Web Browser / CSV Upload]) --> UnifiedApp["Unified FastAPI Server :8000 / Port"]
     
     subgraph Web & API Delivery
-        UnifiedApp -->|Serves Static Build| ReactSPA[Vite React Glassmorphic UI]
-        UnifiedApp -->|Serves REST Endpoints| APIRouter[FastAPI Async API Routers]
+        UnifiedApp -->|Serves Static Build| ReactSPA["Vite React Glassmorphic UI"]
+        UnifiedApp -->|Serves REST Endpoints| APIRouter["FastAPI Async API Routers"]
     end
 
     subgraph Multi-Agent LangGraph Workflow
-        APIRouter --> Supervisor[Supervisor & Entity Router]
-        Supervisor --> WebEnrichment[Prospect Web Enrichment Tool\nPure-Python DuckDuckGo Scraper]
-        Supervisor --> RAGEngine[RAG Company Knowledge Base\nVector Proof Points & Case Studies]
-        Supervisor --> Copywriter[Anti-AI Copywriter Engine\nMistral AI mistral-small-latest]
+        APIRouter --> Supervisor["Supervisor & Entity Router"]
+        Supervisor --> WebEnrichment["Prospect Web Enrichment Tool<br/>Pure-Python DuckDuckGo Scraper"]
+        Supervisor --> RAGEngine["RAG Company Knowledge Base<br/>Vector Proof Points & Case Studies"]
+        Supervisor --> Copywriter["Anti-AI Copywriter Engine<br/>Mistral AI mistral-small-latest"]
         
-        Copywriter --> DynamicFallback[4-Angle Deterministic Variation Engine]
-        Copywriter --> CriticNode[Anti-AI Deliverability Critic Node]
+        Copywriter --> DynamicFallback["4-Angle Deterministic Variation Engine"]
+        Copywriter --> CriticNode["Anti-AI Deliverability Critic Node"]
         
-        CriticNode -->|Anti-AI Score >= 80%| Output[Output & Follow-up Sequencer\nDay 3 & Day 7 Bump]
+        CriticNode -->|Anti-AI Score >= 80%| Output["Output & Follow-up Sequencer<br/>Day 3 & Day 7 Bump"]
         CriticNode -->|Clichés Detected| Copywriter
     end
 
     subgraph Data & Observability Layer
-        APIRouter --> MongoDB[(MongoDB Atlas Cloud)]
-        APIRouter -.->|Optional Telemetry| LangSmith[LangSmith Tracing V2]
+        APIRouter --> MongoDB[("MongoDB Atlas Cloud")]
+        APIRouter -.->|Optional Telemetry| LangSmith["LangSmith Tracing V2"]
     end
 ```
 

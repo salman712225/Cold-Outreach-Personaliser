@@ -23,39 +23,39 @@ flowchart TD
     Start([User Initiates Request]) --> ModeSelect{Choose Mode}
 
     %% Single Mode
-    ModeSelect -->|Single Profile / Context| SingleFlow[Single Outreach Mode]
-    SingleFlow --> InputForm[Enter Sender & Recipient Details\nSelect Tone, Goal & Value Prop]
-    InputForm --> GenerateBtn[Click 'Generate Email']
+    ModeSelect -->|Single Profile / Context| SingleFlow["Single Outreach Mode"]
+    SingleFlow --> InputForm["Enter Sender & Recipient Details<br/>Select Tone, Goal & Value Prop"]
+    InputForm --> GenerateBtn["Click 'Generate Email'"]
     
     %% Batch Mode
-    ModeSelect -->|Batch CSV Upload| BatchFlow[Batch CSV Studio Mode]
-    BatchFlow --> UploadCSV[Upload CSV with Prospect Rows]
-    UploadCSV --> ProcessJob[Trigger Async Background Batch Processor]
+    ModeSelect -->|Batch CSV Upload| BatchFlow["Batch CSV Studio Mode"]
+    BatchFlow --> UploadCSV["Upload CSV with Prospect Rows"]
+    UploadCSV --> ProcessJob["Trigger Async Background Batch Processor"]
     
     %% Backend Processing
-    GenerateBtn & ProcessJob --> SupervisorNode[LangGraph Supervisor Router]
+    GenerateBtn & ProcessJob --> SupervisorNode["LangGraph Supervisor Router"]
     
     subgraph Multi-Agent Processing Pipeline
         SupervisorNode --> ToolsCheck{Tools Enabled?}
-        ToolsCheck -->|Web Search ON| WebEnrich[DuckDuckGo Scraper Node]
-        ToolsCheck -->|RAG Knowledge ON| RAGSearch[RAG Vector Retriever Node]
-        ToolsCheck -->|Direct| Copywriter[Mistral Copywriter Node]
+        ToolsCheck -->|Web Search ON| WebEnrich["DuckDuckGo Scraper Node"]
+        ToolsCheck -->|RAG Knowledge ON| RAGSearch["RAG Vector Retriever Node"]
+        ToolsCheck -->|Direct| Copywriter["Mistral Copywriter Node"]
         
         WebEnrich --> Copywriter
         RAGSearch --> Copywriter
         
-        Copywriter --> VariationSeed[Apply 4-Angle Rotation Seed]
-        VariationSeed --> Critic[Anti-AI Deliverability Critic Node]
+        Copywriter --> VariationSeed["Apply 4-Angle Rotation Seed"]
+        VariationSeed --> Critic["Anti-AI Deliverability Critic Node"]
         
         Critic --> ScoreCheck{Score >= 80%?}
-        ScoreCheck -->|Yes| Followups[Generate Day 3 & Day 7 Follow-ups]
-        ScoreCheck -->|No / Clichés Found| AutoRefine[Auto-Refine Draft Token Strip]
+        ScoreCheck -->|Yes| Followups["Generate Day 3 & Day 7 Follow-ups"]
+        ScoreCheck -->|No / Clichés Found| AutoRefine["Auto-Refine Draft Token Strip"]
         AutoRefine --> Followups
     end
 
-    Followups --> DBStore[(MongoDB Atlas Persistence)]
-    DBStore --> DisplaySingle[Render Interactive UI Cards\nA/B/C Subjects, Body, Score, Follow-ups]
-    DBStore --> StreamBatch[Update Live Batch Row Table & CSV Download]
+    Followups --> DBStore[("MongoDB Atlas Persistence")]
+    DBStore --> DisplaySingle["Render Interactive UI Cards<br/>A/B/C Subjects, Body, Score, Follow-ups"]
+    DBStore --> StreamBatch["Update Live Batch Row Table & CSV Download"]
 ```
 
 ---
@@ -126,20 +126,11 @@ sequenceDiagram
 Clicking **"Generate New Variation (#2, #3, #4)"** cycles deterministically through four distinct structural angles to ensure genuine variety:
 
 ```mermaid
-stateDiagram-v2
-    [*] --> Variation_1: Initial Click (Seed = 1)
-    
-    Variation_1 --> Variation_2: Click 'New Variation (#2)'
-    note right of Variation_1: Angle 1: Direct Core Action\nClear, immediate upfront request or claim.
-    
-    Variation_2 --> Variation_3: Click 'New Variation (#3)'
-    note right of Variation_2: Angle 2: Evidence & Proof Point Focus\nLead with quantified metrics or medical facts.
-    
-    Variation_3 --> Variation_4: Click 'New Variation (#4)'
-    note right of Variation_3: Angle 3: Peer & Collaborative Angle\nFocus on smooth handover, notes, or team sync.
-    
-    Variation_4 --> Variation_1: Click 'New Variation (#5)'
-    note right of Variation_4: Angle 4: Time-Bound & Concise Summary\nUltra-brief, 3-sentence high-efficiency draft.
+flowchart LR
+    V1["Angle 1: Direct Core Action<br/>Clear, immediate upfront request or claim"] -->|Click 'New Variation'| V2["Angle 2: Proof Point Focus<br/>Lead with quantified metrics or medical facts"]
+    V2 -->|Click 'New Variation'| V3["Angle 3: Peer & Collaboration<br/>Focus on smooth handover, notes, or team sync"]
+    V3 -->|Click 'New Variation'| V4["Angle 4: Time-Bound Summary<br/>Ultra-brief, 3-sentence high-efficiency draft"]
+    V4 -->|Click 'New Variation'| V1
 ```
 
 ### Mathematical Seed Rotation Formula:
