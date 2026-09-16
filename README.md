@@ -1,9 +1,21 @@
-# Cold Outreach Personaliser
+# ✉️ Cold Outreach Personaliser
 
-> *“Paste a profile, get an email that does not sound AI-generated.”*
+> **Autonomous Anti-AI Email Engine that transforms raw prospect profiles, student contexts, and job pitches into authentic, high-converting human outreach with zero robotic slop.**
 
-🌐 **Live Application**: [https://cold-outreach-personaliser-1.onrender.com/](https://cold-outreach-personaliser-1.onrender.com/)  
-📂 **GitHub Repository**: [https://github.com/salman712225/Cold-Outreach-Personaliser.git](https://github.com/salman712225/Cold-Outreach-Personaliser.git)
+[![React](https://img.shields.io/badge/Frontend-React%20%2B%20Vite-61DAFB.svg?logo=react&logoColor=black)](https://vitejs.dev/)
+[![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Mistral AI](https://img.shields.io/badge/LLM-Mistral%20AI-FF7000.svg)](https://mistral.ai/)
+[![LangGraph](https://img.shields.io/badge/Orchestration-LangGraph-FF6F00.svg)](https://langchain-ai.github.io/langgraph/)
+[![MongoDB Atlas](https://img.shields.io/badge/Database-MongoDB%20Atlas-47A248.svg?logo=mongodb&logoColor=white)](https://www.mongodb.com/atlas)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+---
+
+## 🌐 Live Web Application
+
+Experience the live anti-AI email generation platform:
+
+👉 **[https://cold-outreach-personaliser-1.onrender.com/](https://cold-outreach-personaliser-1.onrender.com/)**
 
 ---
 
@@ -12,15 +24,14 @@
 ### 🔨 BUILD
 Build an application where a user pastes a prospect profile, selects tone and goal, and receives a personalised outreach email with subject line and follow-up message. Batch mode accepts a CSV of prospects and generates a personalised email for every row.
 
-### ⚙️ TECH STACK & TOOLS USED
-- **Mistral AI API (`mistral-small-latest`)**: High-performance, anti-AI conversational LLM engine.
-- **LangGraph & Multi-Agent Architecture**: Supervisor orchestrator, Copywriter Agent, Anti-AI Deliverability Critic, and Web Enrichment.
+### ⚙️ USE
+- **Mistral AI API (`mistral-small-latest`)**: High-performance anti-AI LLM reasoning engine.
+- **LangGraph Multi-Agent Architecture**: Entity Router, Anti-AI Copywriter, Deliverability Critic, and Web Scraper.
 - **FastAPI (Python 3.10+)**: High-throughput asynchronous backend server with auto-generated Swagger documentation.
-- **Vite + React (Tailwind / Vanilla Glassmorphism)**: Dark-mode UI with live prospect preview, clickable subject line pickers, and real-time human score meters.
-- **MongoDB Atlas**: Cloud NoSQL persistence for outreach history, RAG documents, and batch CSV jobs.
-- **DuckDuckGo Web Scraper**: Pure-Python zero-cost web enrichment tool without paid third-party dependencies.
-- **LangSmith (Optional)**: Observability, telemetry, and evaluation tracing toggleable directly from the UI.
-- **`python-dotenv` & Pydantic V2**: Strict environment configuration and runtime schema validation.
+- **Vite + React (Tailwind / Glassmorphism)**: Dark-mode UI with live prospect preview, clickable subject line pickers, and real-time human score meters.
+- **MongoDB Atlas Cloud**: NoSQL persistence for generation history, RAG documents, and batch CSV jobs.
+- **Pure-Python DuckDuckGo Scraper**: Zero-cost web enrichment tool without paid third-party dependencies.
+- **`python-dotenv` & Pydantic V2**: Environment configuration and runtime schema validation.
 
 ### 📦 EXPECTED OUTPUT
 - **Single Outreach Mode**: Copy-ready email output with distinct From/To entity separation, clickable A/B/C subject line options, automated Day 3 & Day 7 follow-up sequences, and live Anti-AI Human Score (0–100%).
@@ -28,66 +39,54 @@ Build an application where a user pastes a prospect profile, selects tone and go
 
 ---
 
-## 📑 Table of Contents
-1. [What It Does?](#-what-it-does)
-2. [Problem Statement](#-problem-statement)
-3. [The Solution](#-the-solution)
-4. [Unified Zero-Delay Architecture](#-unified-zero-delay-architecture)
-5. [Environment Variables (`.env`)](#-environment-variables-env)
-6. [How to Run It (Local & Cloud Steps)](#-how-to-run-it-local--cloud-steps)
-7. [Step-by-Step Implementation Journey](#-step-by-step-implementation-journey)
-8. [Testing & Sample Outputs](#-testing--sample-outputs)
-9. [Deep-Dive Technical Documentation](#-deep-dive-technical-documentation)
-10. [License](#-license)
+## ❓ What it does ?
+
+**Cold Outreach Personaliser** is an intelligent, multi-agent anti-AI engine that writes natural, human-grade emails across personal, academic, and enterprise domains:
+
+1. **Intake Raw Profile or Context**: Users input raw unstructured text (LinkedIn summaries, job listings, professor bios, or leave reasons) without needing complex prompt engineering.
+2. **Strict Entity Separation (From vs. To)**:
+   - **FROM (Sender)**: Captures your name, role, and organization (used strictly for natural self-introductions and sign-offs).
+   - **TO (Recipient)**: Captures the prospect or authority's name, role, and company (used strictly for polite greetings and contextual hooks).
+3. **Multi-Agent Copywriter & Critic Orchestration**:
+   - **Supervisor Node**: Inspects domain intent (Student Leave, Job Application, Outbound Sales, Founder Networking) and routes context.
+   - **Web Enrichment Tool**: Gathers live prospect signals using pure-Python web scraping.
+   - **RAG Knowledge Base**: Injects custom company case studies and proof points via vector search.
+   - **Anti-AI Copywriter**: Generates drafts using strict negative constraints against robotic clichés.
+4. **Live Anti-AI Deliverability Scoring**: Scans drafts against 20+ forbidden AI tokens, analyzes Flesch-Kincaid conversational readability, and computes an **Anti-AI Human Score (0–100%)**.
+5. **Deterministic 4-Angle Rotating Variations**: Clicking **"Generate New Variation"** cycles through 4 distinct angles (e.g., Direct Coursework Guarantee ➔ Proof Point Focus ➔ Peer Notes Catchup ➔ Time-bound Schedule).
+6. **Automated Follow-up Sequences**: Generates pre-written Day 3 polite bumps and Day 7 polite breakup emails.
+7. **Batch CSV Studio**: Upload a CSV of hundreds of prospects, track real-time row generation progress, inspect individual outputs, and download the enriched CSV.
 
 ---
 
-## 🎯 What It Does?
+## 💥 Problem Statement
 
-Cold Outreach Personaliser transforms raw unstructured notes, LinkedIn profiles, or academic contexts into authentic, human-sounding emails across diverse real-world domains:
+Traditional cold outreach and email tools suffer from severe flaws:
 
-- 🎓 **Student & Academic Communications**: Formal Student Leave Applications (medical emergencies, exam permissions, family obligations), Letters of Recommendation (LOR) requests, and university administrative queries.
-- 💼 **Job Applications & Candidate Inquiries**: Tailored candidate outreach for specialized technical roles (e.g., AIML Engineer, Backend Lead) highlighting quantified achievements without robotic filler.
-- 🤝 **B2B Outbound Sales & Partnerships**: Value-first outbound emails with low-friction 5-minute CTAs and quantified proof points.
-- 🚀 **Founder & Executive Networking**: Peer-to-peer collaboration requests and strategic syncs.
-- 📁 **Batch CSV Studio**: Upload a CSV of hundreds of prospects, track real-time row generation progress, inspect individual outputs, and download the enriched CSV.
-
----
-
-## ⚠️ Problem Statement
-
-### 1. The "AI Slop" Trap
-Standard LLM prompts generate emails that immediately trigger spam filters and recipient skepticism:
-- Obvious openings: *"I hope this email finds you well"*, *"Hope you're having a great week"*, *"I came across your profile..."*
-- Saturated buzzwords: *"delve"*, *"supercharge"*, *"unleash"*, *"cutting-edge"*, *"game-changer"*, *"testament"*, *"spearhead"*.
-- High word counts (250+ words) that result in low reply rates (<5%).
-
-### 2. Entity Role Confusion (From vs. To)
-Generic outreach generators confuse who is writing and who is receiving. When a student or candidate enters their details, traditional tools frequently address the recipient as the student and sign off with a generic placeholder (e.g., *"Hey Mohammed... Best, Alex"*).
-
-### 3. Repetitive Variation Failure
-Clicking "Regenerate" usually results in identical wording or superficial synonym swaps rather than a fresh perspective.
+- **The "AI Slop" Trap**: LLM-generated emails trigger spam filters and instant unsubscribes with dead giveaway openers (*"I hope this email finds you well"*, *"Hope you're having a great week"*) and overused buzzwords (*"supercharge"*, *"delve"*, *"cutting-edge"*, *"game-changer"*).
+- **Entity Role Confusion**: Existing tools constantly confuse the **sender** and the **recipient**. When a student or applicant enters their own name, traditional tools mistakenly address the recipient with the applicant's name and sign off with a generic placeholder (e.g., *"Hey Mohammed... Best, Alex"*).
+- **Repetitive Variation Failure**: Clicking "Regenerate" usually yields the same repetitive text or superficial synonymous swaps.
+- **Bloated Word Counts**: Traditional drafts exceed 250+ words, resulting in low reply rates (<5%) on mobile devices.
 
 ---
 
-## 💡 The Solution
+## 💡 Solution
 
-Cold Outreach Personaliser solves these challenges through:
+**Cold Outreach Personaliser** eliminates robotic patterns and produces natural, high-converting outreach:
 
-1. **Strict Negative Constraints & Anti-AI Critic Engine**: Scans every draft against 20+ forbidden AI clichés, enforces 6th–8th grade conversational reading levels, and calculates a live **Anti-AI Human Score (0–100%)**.
-2. **Explicit Entity Disambiguation (From / Sender vs. To / Recipient)**:
-   - **FROM (Sender Details)**: Name, role, and college/company (strictly used for natural self-introductions and sign-offs).
-   - **TO (Recipient Details)**: Name, role, and organization (strictly used for polite greetings and contextual hooks).
-3. **Guaranteed 4-Angle Deterministic Variation Engine**: Consecutive clicks on **"Generate New Variation"** rotate through 4 distinct structural angles (e.g., Direct Guarantee ➔ Focus on Proof Points ➔ Peer Collaboration ➔ Time-bound Summary).
-4. **Unified Zero-Delay Single Service**: The FastAPI backend directly serves the pre-built React frontend. When the web application starts, the backend is **already active immediately** with zero separate startup delay or cross-origin overhead.
+- **Strict Negative Constraints**: System prompts permanently ban sycophancy, flattering openings, and robotic buzzwords.
+- **Explicit From/To Disambiguation**: Ensures greetings address the recipient (e.g., `Respected Dr. Sharma,`) while sign-offs accurately represent the sender (e.g., `Mohammed Salman \n B.Tech Student, Crescent Institute`).
+- **Guaranteed 4-Angle Variation Engine**: Employs deterministic seed cycling `((seed - 1) % 4) + 1` so every variation click produces a fresh hook and angle.
+- **Unified Zero-Delay Serving**: FastAPI serves the pre-built React frontend directly. When the application starts, the backend is **already warm and running** with zero separate delay or CORS overhead.
+- **Privacy & Free Tooling**: Uses Mistral AI (`mistral-small-latest`) and MongoDB Atlas with zero mandatory third-party subscriptions.
 
 ---
 
-## 🏗️ Unified Zero-Delay Architecture
+## 🏗️ Architecture
 
 ```mermaid
 graph TD
-    User([User / Browser / CSV Upload]) --> UnifiedApp[Unified FastAPI Server :8000 / Port]
+    User([User / Web Browser / CSV Upload]) --> UnifiedApp[Unified FastAPI Server :8000 / Port]
     
     subgraph Web & API Delivery
         UnifiedApp -->|Serves Static Build| ReactSPA[Vite React Glassmorphic UI]
@@ -115,9 +114,86 @@ graph TD
 
 ---
 
-## ⚙️ Environment Variables (`.env`)
+## 🚀 How to Run it
 
-Create a `.env` file in the root or `/backend` directory based on `.env.example`:
+### Prerequisites
+- **Python 3.10+**
+- **Node.js 18+** & `npm`
+- **Git**
+- Free API Keys:
+  - **Mistral AI API Key**
+  - **MongoDB Atlas** connection string
+
+---
+
+### Step 1: Clone the Repository
+```bash
+git clone https://github.com/salman712225/Cold-Outreach-Personaliser.git
+cd Cold-Outreach-Personaliser
+```
+
+---
+
+### Step 2: 1-Click Unified Run (Frontend + Backend Together)
+
+#### On Windows:
+```cmd
+start.bat
+```
+
+#### On macOS / Linux / npm:
+```bash
+npm run dev
+```
+*This compiles the React frontend and launches the unified FastAPI server on `http://localhost:8000` (serving both UI and API simultaneously).*
+
+---
+
+### Step 3: Manual Step-by-Step Execution (Optional)
+
+#### A. Build Frontend Static Bundle
+```bash
+cd frontend
+npm install
+npm run build
+cd ..
+```
+
+#### B. Setup & Start Backend Server
+```bash
+cd backend
+python -m venv venv
+
+# On Windows (PowerShell):
+.\venv\Scripts\activate
+# On macOS / Linux:
+source venv/bin/activate
+
+pip install -r requirements.txt
+python -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload
+```
+*Open **`http://localhost:8000`** in your browser (Interactive Swagger API documentation available at `http://localhost:8000/docs`).*
+
+---
+
+### Step 4: Cloud Deployment on Render
+
+This repository includes a [`render.yaml`](./render.yaml) blueprint:
+
+1. Log in to [Render Dashboard](https://dashboard.render.com).
+2. Click **New +** ➔ **Blueprint**.
+3. Connect your repository: `salman712225/Cold-Outreach-Personaliser`.
+4. Render automatically configures the unified web service:
+   - **Build Command**: `cd frontend && npm install && npm run build && cd ../backend && pip install -r requirements.txt`
+   - **Start Command**: `cd backend && python -m uvicorn main:app --host 0.0.0.0 --port $PORT`
+5. Supply your `MISTRAL_API_KEY` and `MONGODB_URI` environment variables.
+6. Click **Apply** to deploy.
+
+---
+
+## 🔑 What the ENV variables
+
+Create your `.env` file in the root or `/backend` directory based on `.env.example`:
 
 ```env
 # =================================================================
@@ -156,104 +232,18 @@ PORT=8000
 
 ---
 
-## 🚀 How to Run It (Local & Cloud Steps)
-
-### 1. Prerequisites
-- **Python**: 3.10 or higher
-- **Node.js**: 18+ and npm
-- **Git**
-
----
-
-### 2. Quick 1-Click Startup (Frontend + Backend Together)
-
-#### Windows:
-Double-click `start.bat` or run:
-```cmd
-start.bat
-```
-
-#### macOS / Linux / Unified npm:
-```bash
-npm run dev
-```
-*This command automatically compiles the frontend bundle and starts the unified FastAPI backend on `http://localhost:8000` (serving both the website UI and API endpoints together).*
-
----
-
-### 3. Step-by-Step Manual Local Run
-
-#### Step A: Clone Repository
-```bash
-git clone https://github.com/salman712225/Cold-Outreach-Personaliser.git
-cd Cold-Outreach-Personaliser
-```
-
-#### Step B: Install Frontend & Build Static Dist
-```bash
-cd frontend
-npm install
-npm run build
-cd ..
-```
-
-#### Step C: Run Unified Backend
-```bash
-cd backend
-python -m venv venv
-
-# Windows:
-.\venv\Scripts\activate
-# macOS/Linux:
-source venv/bin/activate
-
-pip install -r requirements.txt
-python -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload
-```
-*Open **`http://localhost:8000`** in your browser to view the application.*
-
----
-
-### 4. Cloud Deployment on Render
-
-The repository includes a [`render.yaml`](./render.yaml) blueprint:
-
-1. Go to [Render Dashboard](https://dashboard.render.com).
-2. Click **New +** ➔ **Blueprint**.
-3. Select your repository: `salman712225/Cold-Outreach-Personaliser`.
-4. Render automatically configures the single unified web service:
-   - **Build Command**: `cd frontend && npm install && npm run build && cd ../backend && pip install -r requirements.txt`
-   - **Start Command**: `cd backend && python -m uvicorn main:app --host 0.0.0.0 --port $PORT`
-5. Enter your `MISTRAL_API_KEY` and `MONGODB_URI` when prompted.
-6. Click **Apply** to deploy.
-
----
-
 ## 🛠️ Step-by-Step Implementation Journey
 
-### Phase 1: Architecture & Entity Schema Separation
-- Designed Pydantic V2 models explicitly distinguishing **Sender (From)** from **Recipient (To)** to resolve naming hallucinations.
-
-### Phase 2: Mistral AI (`mistral-small-latest`) Engine
-- Integrated resilient asynchronous `httpx` Mistral API communication with anti-sycophancy negative system prompts.
-
-### Phase 3: Multi-Agent Anti-AI Deliverability Critic
-- Built automated rule evaluation filtering 20+ forbidden AI tokens and scoring drafts for human reading cadence.
-- Implemented automated 2-step follow-up sequences (Day 3 polite bump & Day 7 polite breakup).
-
-### Phase 4: Deterministic 4-Angle Variation Engine
-- Formulated rotating seed logic `variant_seed = ((seed - 1) % 4) + 1` ensuring consecutive clicks produce visibly distinct angles and subject lines.
-
-### Phase 5: MongoDB Atlas Cloud & Batch CSV Studio
-- Configured asynchronous `motor` connection with automated fallback handling.
-- Implemented batch CSV processor preserving original column mappings while appending generated output columns.
-
-### Phase 6: Unified Zero-Delay Static Serving
-- Enhanced FastAPI backend to mount and serve pre-built Vite React static assets directly on the root path, eliminating separate backend startup delay and CORS overhead in production.
+- **Phase 1: Architecture & Entity Schema Separation**: Engineered Pydantic V2 models distinguishing Sender (From) from Recipient (To) to eliminate naming hallucinations.
+- **Phase 2: Mistral AI (`mistral-small-latest`) Engine**: Built asynchronous `httpx` Mistral API communication with anti-sycophancy negative prompts.
+- **Phase 3: Multi-Agent Anti-AI Deliverability Critic**: Implemented an automated critic node evaluating 20+ forbidden AI tokens and scoring drafts for human reading cadence.
+- **Phase 4: Deterministic 4-Angle Variation Engine**: Formulated rotating seed logic `((seed - 1) % 4) + 1` ensuring consecutive clicks produce visibly distinct angles and subject lines.
+- **Phase 5: MongoDB Atlas Cloud & Batch CSV Studio**: Configured asynchronous `motor` connection and batch CSV ingestion/export preserving original user columns.
+- **Phase 6: Unified Zero-Delay Static Serving**: Configured FastAPI to mount pre-built React static assets directly on `/`, eliminating separate backend startup delay and CORS latency in production.
 
 ---
 
-## 🧪 Testing & Sample Outputs
+## 🧪 Testing & Verification
 
 ### Automated Verification Script
 Run the built-in test runner from `/backend`:
@@ -341,7 +331,7 @@ AIML Candidate & Graduate, Crescent Institute
 
 ### Anti-AI Forbidden Clichés Matrix
 
-The Deliverability Critic node detects and eliminates these clichés:
+The Deliverability Critic node detects and penalizes the following patterns:
 
 ```json
 [
@@ -364,4 +354,4 @@ The Deliverability Critic node detects and eliminates these clichés:
 
 ## 📄 License
 
-This project is open-source and licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
