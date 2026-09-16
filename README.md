@@ -1,189 +1,333 @@
-# ColdReach.ai — Anti-AI Cold Outreach Personaliser
+# ColdReach.ai — Anti-AI Universal Email & Cold Outreach Personaliser
 
-> *"Paste a prospect profile, get an email that does NOT sound AI-generated."*
+> *"Paste a profile or context, get an email that does NOT sound AI-generated."*
 
-ColdReach.ai is an enterprise-grade cold outreach personalization engine designed to generate high-converting, natural, conversational cold emails and multi-step follow-up sequences that pass deliverability checks and sound 100% human.
+ColdReach.ai is an enterprise-grade universal email personalization and cold outreach engine powered by **Mistral AI (`mistral-small-latest`)**, **LangGraph Multi-Agent Workflows**, **MongoDB Atlas**, and **Vite + React**. 
 
-Powered by **Anthropic Claude (3.5 Sonnet / Haiku)**, **LangGraph Multi-Agent Architecture**, **RAG (Retrieval-Augmented Generation)**, **FastAPI**, **MongoDB**, and **LangSmith Tracing & Evaluation**.
-
----
-
-## 📸 Key Features
-
-- 👤 **Single Outreach Studio**: Paste raw LinkedIn bio, company notes, or select curated sample personas. Pick tone, goal, and value proposition.
-- 🚫 **Strict Anti-AI Humanizer**: Completely eliminates generic AI dead giveaways (*"I hope this email finds you well"*, *"In today's fast-paced digital world"*, *"delve"*, *"cutting-edge"*, *"supercharge"*) in favor of punchy 6th–8th grade conversational cadence.
-- 🔀 **A/B Subject Line Generator & 2-Step Sequence**: Generates lowercase/sentence-case high-open subject lines, full email body, Day 3 follow-up bump, and Day 7 polite breakup email.
-- 📊 **Anti-AI Score & Critic Inspector**: Real-time deliverability score (0–100%), AI cliché scanner, spam trigger detector, and readability metrics.
-- 📁 **Batch CSV Studio**: Upload a CSV of hundreds of prospects, track live row-by-row progress, and export a downloadable CSV enriched with `Generated_Subject`, `Generated_Email`, `Generated_Followup_1`, `Generated_Followup_2`, and `Anti_AI_Score`.
-- 🧠 **RAG Knowledge Base**: Vector database storing verified case studies, ROI metrics, product capabilities, and winning email templates for dynamic context injection.
-- 🌐 **Live Web Enrichment Tool**: Scrapes recent company updates, funding rounds, or hiring announcements for hyper-relevant email hooks.
-- 🔭 **LangSmith Tracing & Evaluation**: End-to-end trace observability and automated evaluation suite benchmarking Anti-AI scores and latency across test datasets.
-- 🔒 **JWT Authentication & MongoDB Storage**: Secure user authentication with async MongoDB persistence and zero-config local storage fallback.
-- ⚡ **n8n Workflow Export**: Pre-configured `workflow.json` for CRM sync (Airtable / HubSpot / Telegram alerts).
+It eliminates sycophantic AI fluff, robot buzzwords, and template clichés in favor of natural conversational cadence, distinct entity separation (From / Sender vs. To / Recipient), and guaranteed rotating variation angles for every domain.
 
 ---
 
-## 🤖 Which AI Model Is Used and Why?
-
-- **Primary Model**: `claude-3-5-sonnet-20241022` (Anthropic API)
-- **Fast/Batch Model**: `claude-3-haiku-20240307`
-
-### **Why Claude?**
-1. **Superior Human Conversational Tone**: Unlike standard models that default to overly formal, sycophantic, and verbose templates, Claude excels at nuanced, punchy, peer-to-peer phrasing.
-2. **Strict Negative Constraint Adherence**: Claude precisely respects negative prompts (banning forbidden clichés like *"game-changer"*, *"delve"*, *"testament"*, or generic praise).
-3. **Structured Tool Calling & JSON Reliability**: Reliable extraction of multi-step sequences and subject lines directly in schema-conforming JSON.
+## 📑 Table of Contents
+1. [What It Does?](#-what-it-does)
+2. [Problem Statement](#-problem-statement)
+3. [The Solution](#-the-solution)
+4. [Core Architecture](#-core-architecture)
+5. [Environment Variables (`.env`)](#-environment-variables-env)
+6. [How to Run It (Local & Cloud Steps)](#-how-to-run-it-local--cloud-steps)
+7. [Step-by-Step Implementation Journey](#-step-by-step-implementation-journey)
+8. [Testing & Verification](#-testing--verification)
+9. [Deep-Dive Technical Documentation](#-deep-dive-technical-documentation)
+10. [License](#-license)
 
 ---
 
-## 🏗️ Multi-Agent Architecture (LangGraph)
+## 🎯 What It Does?
+
+ColdReach.ai transforms unstructured notes, LinkedIn summaries, or job descriptions into authentic, human-sounding emails across diverse real-world contexts:
+
+- 🎓 **Student & Academic Communications**: Student Leave Applications (medical, urgent, family), Letters of Recommendation (LOR) requests, and college administrative inquiries.
+- 💼 **Career & Job Applications**: Tailored candidate outreach for high-demand technical roles (e.g., AIML Engineer, Backend Lead) with quantified project achievements.
+- 🤝 **B2B Partnerships & Outbound Sales**: High-converting, peer-to-peer outreach with low-friction 5-minute CTAs and quantified ROI proof points.
+- 🚀 **Founder & Executive Networking**: Relatable startup collaborations and peer-to-peer observations without salesy pushiness.
+- 📁 **Batch CSV Studio**: Upload a CSV of hundreds of prospects, track real-time generation progress, and download the original data enriched with `Generated_Subject`, `Generated_Email`, `Generated_Followup_1`, `Generated_Followup_2`, and `Anti_AI_Score`.
+
+---
+
+## ⚠️ Problem Statement
+
+### 1. The "AI Slop" Trap
+Traditional LLM-generated emails suffer from obvious dead giveaways:
+- Robotic openers: *"I hope this email finds you well"*, *"Hope you're having a great week"*, *"I came across your profile..."*
+- Saturated buzzwords: *"delve"*, *"supercharge"*, *"unleash"*, *"cutting-edge"*, *"game-changer"*, *"testament"*, *"spearhead"*.
+- High word counts (250+ words) leading to spam filters, low open rates (<15%), and instant unsubscribes.
+
+### 2. Entity Role Confusion (From vs. To)
+Most outreach generators confuse the **sender** and the **recipient**. When a student or candidate enters their own name, traditional tools mistakenly address the recipient as the student and sign off with a generic placeholder (e.g., *"Hey Mohammed... Best, Alex"*).
+
+### 3. Repetitive Variation Failure
+Clicking "Regenerate" or "Generate New Variation" often produces the exact same template or minor synonymous swaps instead of a fresh conceptual angle.
+
+---
+
+## 💡 The Solution
+
+ColdReach.ai solves these challenges through:
+
+1. **Strict Negative Constraints & Anti-AI Critic Engine**: A multi-agent evaluation node scans every generated draft against 20+ forbidden AI clichés, enforces 6th–8th grade conversational reading levels, and computes a live **Anti-AI Human Score (0–100%)**.
+2. **Explicit Entity Disambiguation (From / Sender vs. To / Recipient)**:
+   - **FROM (Sender)**: Your name, role, and college/company (used for natural self-introductions and sign-offs).
+   - **TO (Recipient)**: Prospect/Professor name, role, and organization (used for polite greetings and contextual hooks).
+3. **Guaranteed 4-Angle Deterministic Variation Engine**: Every click on **"Generate New Variation"** cycles through distinct perspectives (e.g., Direct Coursework Guarantee ➔ Medical Rest Focus ➔ Peer Notes Catchup ➔ Time-bound Return Schedule).
+4. **Lightweight & Universal Stack**: Powered by **Mistral AI (`mistral-small-latest`)** with zero mandatory third-party dependencies, asynchronous **MongoDB Atlas** persistence, and optional **LangSmith** telemetry.
+
+---
+
+## 🏗️ Core Architecture
 
 ```mermaid
 graph TD
-    User([User / Web UI / CSV]) --> FastAPI[FastAPI Backend]
+    User([User / Web UI / CSV Upload]) --> Frontend[Vite React Frontend]
+    Frontend --> FastAPI[FastAPI Backend Engine]
 
-    subgraph LangGraph Multi-Agent Flow
-        FastAPI --> Supervisor[Supervisor & Routing Agent]
-        Supervisor --> ResearchAgent[Prospect Research Agent\nWeb Tools / DuckDuckGo / Tavily]
-        Supervisor --> RAGAgent[RAG Knowledge Agent\nVector Case Studies & Value Props]
-        Supervisor --> CopywriterAgent[Anti-AI Copywriter Agent\nClaude 3.5 Sonnet]
-        Supervisor --> CriticAgent[Critic & Evaluator Agent]
+    subgraph Multi-Agent LangGraph Workflow
+        FastAPI --> Supervisor[Supervisor & Entity Router]
+        Supervisor --> WebEnrichment[Prospect Web Enrichment Tool\nPure-Python DuckDuckGo Scraper]
+        Supervisor --> RAGEngine[RAG Company Knowledge Base\nVector Proof Points & Case Studies]
+        Supervisor --> Copywriter[Anti-AI Copywriter Engine\nMistral AI mistral-small-latest]
         
-        CriticAgent -->|Anti-AI Score < 80%| CopywriterAgent
-        CriticAgent -->|Approved >= 80%| OutputFormatter[Output & Follow-up Sequencer]
+        Copywriter --> DynamicFallback[4-Angle Deterministic Variation Engine]
+        Copywriter --> CriticNode[Anti-AI Deliverability Critic Node]
+        
+        CriticNode -->|Anti-AI Score >= 80%| Output[Output & Follow-up Sequencer\nDay 3 & Day 7 Bump]
+        CriticNode -->|Clichés Detected| Copywriter
     end
 
-    subgraph Persistence & Observability
-        FastAPI --> MongoDB[(MongoDB / Motor)]
-        FastAPI --> LangSmith[LangSmith Tracing V2 & Eval]
+    subgraph Data & Observability Layer
+        FastAPI --> MongoDB[(MongoDB Atlas Cloud)]
+        FastAPI -.->|Optional Telemetry| LangSmith[LangSmith Tracing V2]
     end
 ```
-
-1. **Supervisor Agent**: Parses profile input, determines intent, and routes tasks.
-2. **Research Agent**: Fetches recent company news and tech stack using web tools.
-3. **RAG Agent**: Queries the vector store for matching product capabilities and case studies.
-4. **Copywriter Agent (Claude)**: Writes the high-context hook, proof point, and frictionless CTA.
-5. **Critic / Evaluator Agent**: Scans for 20+ known AI clichés and spam words, calculates the Anti-AI score, and triggers rewrite if deliverability is below threshold.
 
 ---
 
 ## ⚙️ Environment Variables (`.env`)
 
-Create a `.env` file in the root and `/backend` directory (see `.env.example`):
+Create a `.env` file in the root or `/backend` directory based on `.env.example`:
 
 ```env
-# Mistral AI API Key & Model
+# =================================================================
+# 1. Mistral AI Configuration (Primary LLM Engine)
+# =================================================================
 MISTRAL_API_KEY=your_mistral_api_key_here
-MISTRAL_MODEL=mistral-large-latest
+MISTRAL_MODEL=mistral-small-latest
 
-# LangSmith Observability & Evaluation Tracing (Optional / Recommended)
-LANGCHAIN_TRACING_V2=true
+# =================================================================
+# 2. Database Connection (MongoDB Atlas Cloud or Local)
+# =================================================================
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.jhhphys.mongodb.net/?appName=Cluster0
+MONGODB_DB_NAME=cold_outreach_db
+
+# =================================================================
+# 3. Optional LangSmith Observability & Tracing (Configurable in UI)
+# =================================================================
+LANGCHAIN_TRACING_V2=false
 LANGCHAIN_API_KEY=lsv2_pt_...
 LANGCHAIN_PROJECT=cold-outreach-personaliser
 LANGCHAIN_ENDPOINT=https://api.smith.langchain.com
 
-# MongoDB Connection (Atlas Cloud or Localhost)
-MONGODB_URI=mongodb+srv://...
-MONGODB_DB_NAME=cold_outreach_db
-
-# Security & Authentication
-JWT_SECRET=your_super_secret_jwt_key_here
+# =================================================================
+# 4. JWT Authentication & Security
+# =================================================================
+JWT_SECRET=super_secret_jwt_key_change_in_production_987654321
 JWT_ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=1440
 
-# Server
+# =================================================================
+# 5. Server Configuration
+# =================================================================
 HOST=0.0.0.0
 PORT=8000
 ```
 
-> **Security Note**: `.env` is listed in `.gitignore` to prevent committing secrets to version control. Keys are loaded dynamically via `python-dotenv`.
+---
+
+## 🚀 How to Run It (Local & Cloud Steps)
+
+### 1. Prerequisites
+- **Python**: 3.10+ installed
+- **Node.js**: 18+ and npm installed
+- **Git**
 
 ---
 
-## 🚀 How to Run Locally
+### 2. Local Development Setup
 
-### Prerequisites
-- Python 3.10+
-- Node.js 18+ and npm
-
----
-
-### Step 1: Start the Backend (FastAPI)
-
+#### Step A: Clone Repository
 ```bash
-# Navigate to backend directory
-cd backend
-
-# Install dependencies
-python -m pip install -r requirements.txt
-
-# Start FastAPI server
-python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
+git clone https://github.com/salman712225/Cold-Outreach-Personaliser.git
+cd Cold-Outreach-Personaliser
 ```
 
-Backend API Swagger Docs will be available at: `http://localhost:8000/docs`
-
----
-
-### Step 2: Start the Frontend (React + Vite)
-
+#### Step B: Run Backend (FastAPI)
 ```bash
-# Navigate to frontend directory in a new terminal
+cd backend
+python -m venv venv
+
+# Windows:
+.\venv\Scripts\activate
+# macOS/Linux:
+# source venv/bin/activate
+
+pip install -r requirements.txt
+python -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload
+```
+*Backend API & Interactive Swagger Docs will run at `http://localhost:8000/docs`.*
+
+#### Step C: Run Frontend (Vite + React)
+```bash
+# In a new terminal:
 cd frontend
-
-# Install dependencies
 npm install
-
-# Start Vite development server
 npm run dev
 ```
-
-Open your browser at: `http://localhost:5173`
+*Open **`http://localhost:5173`** in your browser.*
 
 ---
 
-## 🧪 Running the LangSmith Evaluation Suite
+### 3. Cloud Deployment on Render (Automated Blueprint)
 
-You can execute automated benchmark evaluations directly from the UI tab **"LangSmith Eval"** or via the API:
+This repository includes a [`render.yaml`](./render.yaml) configuration file for one-click deployment:
+
+1. Log in to [Render Dashboard](https://dashboard.render.com).
+2. Click **New +** ➔ **Blueprint**.
+3. Connect your repository: `salman712225/Cold-Outreach-Personaliser`.
+4. Render automatically configures:
+   - **Backend Web Service** (`cold-outreach-backend` on Python 3 with `uvicorn main:app --host 0.0.0.0 --port $PORT`).
+   - **Frontend Static Site** (`cold-outreach-frontend` with `npm install && npm run build` and publish dir `dist`).
+5. Set your `MISTRAL_API_KEY` and `MONGODB_URI` environment variables in the Render prompt.
+6. Click **Apply** to deploy.
+
+---
+
+## 🛠️ Step-by-Step Implementation Journey
+
+### Phase 1: Architecture & Entity Schema Design
+- Defined strict schemas separating **Sender (From)** from **Recipient (To)** in Pydantic models.
+- Established JSON-contract enforcement between frontend and backend.
+
+### Phase 2: Mistral AI (`mistral-small-latest`) Integration
+- Built zero-crash resilience with asynchronous `httpx` client calls.
+- Designed system prompts forbidding sycophancy, AI clichés, and formatting artifacts.
+
+### Phase 3: Multi-Agent Anti-AI Critic Engine
+- Developed the **Critic Evaluator Node** to scan for banned tokens and calculate the Flesch-Kincaid / conversational readability score.
+- Structured automated 2-step follow-up sequence generation (Day 3 polite bump & Day 7 polite breakup).
+
+### Phase 4: Entity Disambiguation (From vs. To)
+- Eliminated entity confusion by ensuring the greeting addresses the recipient (e.g., `Respected Dr. Sharma,`) and the sign-off strictly reflects the sender (e.g., `Mohammed Salman \n B.Tech Student, Crescent Institute`).
+
+### Phase 5: 4-Angle Guaranteed Deterministic Rotating Variations
+- Built 4 distinct perspective angles for every domain, ensuring that clicking "Generate New Variation (#2, #3, #4)" deterministically cycles to fresh hooks, phrasing, and subject lines.
+
+### Phase 6: MongoDB Atlas Persistence & Batch CSV Processing
+- Integrated `motor` asynchronous MongoDB client with fallback handling.
+- Implemented batch CSV ingestion and export preserving original columns while adding generated subjects, emails, and follow-ups.
+
+### Phase 7: UI/UX Studio & Production Packaging
+- Created a dark-mode glassmorphic interface with clickable subject line selectors, real-time token metrics, sample persona presets, and `render.yaml` deployment blueprints.
+
+---
+
+## 🧪 Testing & Verification
+
+### Automated Verification Script
+Run the built-in end-to-end verification script from the `/backend` folder:
 
 ```bash
-# Trigger benchmark evaluation via curl
-curl -X POST http://localhost:8000/api/evaluation/run-suite
+python -c "
+from app.agents.copywriter import generate_dynamic_fallback
+
+# Test Student Leave Letter
+r1 = generate_dynamic_fallback(
+    prospect_name='Dr. Sharma',
+    prospect_company='Crescent Institute',
+    prospect_role='HOD & Professor',
+    profile_text='Professor overseeing B.Tech coursework.',
+    tone='Formal & Respectful',
+    goal='Leave Application / Permission',
+    value_proposition='Severe viral fever requiring 3 days medical rest.',
+    sender_name='Mohammed Salman',
+    sender_role='B.Tech Student',
+    sender_company='Crescent Institute',
+    recipient_name='Dr. Sharma',
+    recipient_company='Crescent Institute',
+    recipient_role='HOD',
+    variation_count=1
+)
+print('Subject:', r1['selected_subject'])
+print('Body:\n' + r1['email_body'])
+"
+```
+
+### Sample Outputs
+
+#### 1. Student Leave Letter (Formal Academic)
+```text
+Subject: Leave Application - Mohammed Salman (Crescent Institute)
+
+Respected Dr. Sharma,
+
+I am writing to formally request a leave of absence from Crescent Institute due to severe viral fever requiring 3 days of medical rest (Oct 12 to Oct 15).
+
+I will ensure that all my pending coursework and assignments are caught up upon my return, and I remain reachable via email should any urgent matter arise.
+
+Kindly consider my request and grant permission for the indicated duration.
+
+Thank you for your understanding.
+
+Sincerely,
+Mohammed Salman
+B.Tech CSE Student, Crescent Institute
+```
+
+#### 2. AIML Candidate Job Application
+```text
+Subject: Application / Note re: AIML development at DataMatrix AI
+
+Dear Hiring Manager,
+
+Following DataMatrix AI's technical roadmap in AIML development with great interest.
+
+I'm Mohammed Salman, an AIML Candidate & Graduate at Crescent Institute. Over the past few months, I've focused on how teams can cut cloud vector database compute costs by 52% with semantic deduplication.
+
+Would you be open to a brief 5-minute conversation regarding the opportunity?
+
+All the best,
+Mohammed Salman
+AIML Candidate & Graduate, Crescent Institute
 ```
 
 ---
 
-## 📦 Batch Mode CSV Structure
+## 🔬 Deep-Dive Technical Documentation
 
-Download the sample template from the UI or use this format:
+### API Endpoints Reference
 
-```csv
-Name,Company,Role,Profile,Custom_Notes
-Sarah Connor,Cyberdyne Dynamics,VP of Engineering,"Leading infrastructure scaling from 10k to 500k RPS. Tech stack: Go, Kubernetes, Kafka.","Interested in reliability automation"
-David Miller,Apex Growth Partners,Head of Outbound,"Overseeing SDR team of 15 reps. Focus on enterprise pipeline generation.","Looking for higher conversion hooks"
+| Method | Endpoint | Description | Auth Required |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/health` | Returns server health, model status, MongoDB state | No |
+| `POST` | `/api/auth/register` | Register new user account | No |
+| `POST` | `/api/auth/login` | Login and obtain JWT bearer token | No |
+| `GET` | `/api/auth/me` | Fetch authenticated user profile | Yes |
+| `POST` | `/api/outreach/generate` | Generate Anti-AI email, subjects, follow-ups & score | Yes / Guest |
+| `POST` | `/api/batch/upload` | Upload CSV and generate batch emails | Yes / Guest |
+| `GET` | `/api/batch/export/{job_id}` | Export batch results as downloadable CSV | Yes / Guest |
+| `GET` | `/api/history` | Retrieve saved generation history from MongoDB | Yes / Guest |
+
+### Anti-AI Forbidden Clichés Matrix
+
+The Critic Agent actively filters and penalizes the following patterns:
+
+```json
+[
+  "I hope this email finds you well",
+  "Hope you're having a great week",
+  "In today's fast-paced world",
+  "game-changer",
+  "supercharge",
+  "unleash",
+  "delve",
+  "cutting-edge",
+  "testament",
+  "spearhead",
+  "seamlessly",
+  "synergy"
+]
 ```
 
-The exported CSV will include all original columns plus:
-- `Generated_Subject`
-- `Generated_Email`
-- `Generated_Followup_1`
-- `Generated_Followup_2`
-- `Anti_AI_Score`
-- `Status`
-
 ---
 
-## 🔄 n8n Integration
+## 📄 License
 
-The workflow configuration is committed at [`workflow.json`](./workflow.json). You can import it directly into your n8n workspace to automate cold outreach syncing to Airtable, HubSpot, or Slack/Telegram alert channels.
-
----
-
-## 🛡️ Capstone Submission Checklist Verified
-
-- [x] GitHub repository set to public
-- [x] API keys in `.env` and loaded with `python-dotenv` — never hardcoded
-- [x] `.env` is listed in `.gitignore`
-- [x] README covers: what it does, how to run it, which AI model is used and why, what the env vars are
-- [x] n8n workflow exported as `workflow.json` and committed alongside the code
-- [x] All Must Include items implemented (Single email, Batch CSV download, Claude API, FastAPI, MongoDB, LangGraph, LangSmith, RAG)
-- [x] Clean commit history showing progress
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
