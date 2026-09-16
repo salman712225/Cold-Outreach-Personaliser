@@ -112,7 +112,10 @@ graph TD
     end
 ```
 
+> 📖 **Deep-Dive Guides**: For complete technical specifications, see [docs/architecture.md](docs/architecture.md) and [docs/workflow.md](docs/workflow.md).
+
 ---
+
 
 ## 🚀 How to Run it
 
