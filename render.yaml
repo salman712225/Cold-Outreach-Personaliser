@@ -1,13 +1,13 @@
 services:
-  # Backend Web Service (FastAPI)
+  # Unified Full-Stack Web Service (FastAPI serves both API and Vite React Frontend together)
+  # When the website loads, backend is already active instantly with zero separate startup delay.
   - type: web
-    name: cold-outreach-backend
+    name: coldreach-app
     env: python
     region: oregon
     plan: free
-    rootDir: backend
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    buildCommand: cd frontend && npm install && npm run build && cd ../backend && pip install -r requirements.txt
+    startCommand: cd backend && python -m uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: MISTRAL_API_KEY
         sync: false
@@ -21,23 +21,3 @@ services:
         generateValue: true
       - key: LANGCHAIN_TRACING_V2
         value: "false"
-
-  # Frontend Static Site (Vite React)
-  - type: web
-    name: cold-outreach-frontend
-    env: static
-    region: oregon
-    plan: free
-    rootDir: frontend
-    buildCommand: npm install && npm run build
-    staticPublishPath: dist
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
-    envVars:
-      - key: VITE_API_BASE_URL
-        fromService:
-          type: web
-          name: cold-outreach-backend
-          property: host

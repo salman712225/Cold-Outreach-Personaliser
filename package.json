@@ -1,0 +1,23 @@
+{
+  "name": "cold-outreach-personaliser",
+  "version": "1.0.0",
+  "description": "Anti-AI Universal Email & Cold Outreach Personaliser",
+  "main": "backend/main.py",
+  "scripts": {
+    "build": "cd frontend && npm install && npm run build",
+    "start": "cd backend && python -m uvicorn main:app --host 0.0.0.0 --port 8000",
+    "dev:backend": "cd backend && python -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev": "npm run build && npm run start"
+  },
+  "keywords": [
+    "cold-outreach",
+    "anti-ai",
+    "mistral",
+    "langgraph",
+    "fastapi",
+    "react"
+  ],
+  "author": "Mohammed Salman",
+  "license": "MIT"
+}

@@ -54,13 +54,50 @@ app.include_router(rag_router)
 app.include_router(eval_router)
 app.include_router(history_router)
 
-@app.get("/")
-async def root():
+import os
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse, JSONResponse
+
+# Determine frontend dist directory
+FRONTEND_DIST = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend", "dist"))
+STATIC_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "static"))
+
+def get_dist_path():
+    if os.path.isdir(FRONTEND_DIST):
+        return FRONTEND_DIST
+    if os.path.isdir(STATIC_DIR):
+        return STATIC_DIR
+    return None
+
+# Mount assets if available at startup
+initial_dist = get_dist_path()
+if initial_dist:
+    assets_dir = os.path.join(initial_dist, "assets")
+    if os.path.isdir(assets_dir):
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
+
+@app.get("/{full_path:path}")
+async def serve_spa_or_static(full_path: str):
+    # Pass through API and docs endpoints
+    if full_path.startswith("api") or full_path.startswith("docs") or full_path == "openapi.json":
+        return JSONResponse({"detail": "Not Found"}, status_code=404)
+    
+    current_dist = get_dist_path()
+    if current_dist:
+        candidate = os.path.join(current_dist, full_path)
+        if full_path and os.path.isfile(candidate):
+            return FileResponse(candidate)
+        index_file = os.path.join(current_dist, "index.html")
+        if os.path.isfile(index_file):
+            return FileResponse(index_file)
+    
     return {
         "message": "Cold Outreach Personaliser API is running",
         "tagline": "Paste a profile, get an email that does not sound AI-generated.",
-        "docs": "/docs"
+        "docs": "/docs",
+        "status": "Frontend not built yet. Run 'npm run build' in frontend/ to serve the UI here."
     }
+
 
 @app.get("/api/health")
 async def health_check():
@@ -76,3 +113,4 @@ async def health_check():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host=settings.HOST, port=settings.PORT, reload=True)
+
