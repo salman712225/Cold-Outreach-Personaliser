@@ -6,9 +6,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Settings(BaseSettings):
-    # Anthropic
-    ANTHROPIC_API_KEY: str = os.getenv("ANTHROPIC_API_KEY", "")
-    ANTHROPIC_MODEL: str = os.getenv("ANTHROPIC_MODEL", "claude-3-5-sonnet-20241022")
+    # Mistral AI (Primary LLM Engine)
+    MISTRAL_API_KEY: str = os.getenv("MISTRAL_API_KEY", "")
+    MISTRAL_MODEL: str = os.getenv("MISTRAL_MODEL", "mistral-small-latest")
 
     # LangSmith Tracing & Observability
     LANGCHAIN_TRACING_V2: str = os.getenv("LANGCHAIN_TRACING_V2", "true")
@@ -16,12 +16,9 @@ class Settings(BaseSettings):
     LANGCHAIN_PROJECT: str = os.getenv("LANGCHAIN_PROJECT", "cold-outreach-personaliser")
     LANGCHAIN_ENDPOINT: str = os.getenv("LANGCHAIN_ENDPOINT", "https://api.smith.langchain.com")
 
-    # MongoDB
+    # MongoDB Database URI
     MONGODB_URI: str = os.getenv("MONGODB_URI", "mongodb://localhost:27017")
     MONGODB_DB_NAME: str = os.getenv("MONGODB_DB_NAME", "cold_outreach_db")
-
-    # Web Enrichment
-    TAVILY_API_KEY: str = os.getenv("TAVILY_API_KEY", "")
 
     # Security
     JWT_SECRET: str = os.getenv("JWT_SECRET", "super_secret_jwt_key_change_in_production_987654321")

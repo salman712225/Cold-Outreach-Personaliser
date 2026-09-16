@@ -32,7 +32,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Cold Outreach Personaliser API",
-    description="Multi-Agent Anti-AI Cold Email Generation Engine powered by Claude & LangGraph",
+    description="Multi-Agent Anti-AI Cold Email Generation Engine powered by Mistral AI & LangGraph",
     version="1.0.0",
     lifespan=lifespan
 )
@@ -66,8 +66,8 @@ async def root():
 async def health_check():
     return {
         "status": "healthy",
-        "model": settings.ANTHROPIC_MODEL,
-        "anthropic_configured": bool(settings.ANTHROPIC_API_KEY and not settings.ANTHROPIC_API_KEY.startswith("your_")),
+        "model": settings.MISTRAL_MODEL,
+        "mistral_configured": bool(settings.MISTRAL_API_KEY and not settings.MISTRAL_API_KEY.startswith("your_")),
         "langsmith_tracing": settings.LANGCHAIN_TRACING_V2 == "true",
         "langsmith_project": settings.LANGCHAIN_PROJECT,
         "database": "mongodb_connected" if db_manager.is_connected else "in_memory_fallback_active"

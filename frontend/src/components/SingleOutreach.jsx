@@ -17,52 +17,88 @@ import {
   Building2,
   Briefcase,
   Mail,
-  Sliders
+  Sliders,
+  UserCheck,
+  Target
 } from 'lucide-react';
 import { api } from '../services/api';
 
 const SAMPLE_PERSONAS = [
   {
-    label: "VP of Engineering",
-    name: "Alex Rivera",
-    company: "DataMatrix AI",
-    role: "VP of Engineering",
-    profile: "VP of Engineering @ DataMatrix AI. Scaling distributed LLM cache architecture from 10k to 2M DAU. Previously Lead Architect at Datadog. Hiring backend engineers.",
-    goal: "Book a 15-min discovery call",
-    tone: "Casual & Direct",
-    valueProp: "Cut cloud vector database compute costs by 52% with semantic deduplication"
+    label: "🎓 Student Leave Letter",
+    senderName: "Mohammed Salman",
+    senderRole: "B.Tech CSE Student",
+    senderCompany: "Crescent Institute",
+    recipientName: "Dr. Sharma",
+    recipientRole: "HOD & Professor (Computer Science)",
+    recipientCompany: "Crescent Institute",
+    profile: "Professor & HOD of Computer Science department overseeing B.Tech coursework and semester attendance.",
+    goal: "Leave Application / Permission",
+    tone: "Formal & Respectful",
+    valueProp: "Severe viral fever requiring 3 days of medical rest (Oct 12 to Oct 15). Doctor certificate attached.",
+    customInstructions: "Student Roll Number: CS-2024-88"
   },
   {
-    label: "Head of Sales / SDR Leader",
-    name: "Marcus Vance",
-    company: "Apex Revenue Labs",
-    role: "Head of Outbound",
-    profile: "Head of Outbound @ Apex Revenue Labs. Passionate about pipeline generation and SDR team productivity. Building outbound playbooks for enterprise accounts.",
-    goal: "Product Demo",
+    label: "💼 AIML Job Application",
+    senderName: "Mohammed Salman",
+    senderRole: "AIML Candidate & Graduate",
+    senderCompany: "Crescent Institute",
+    recipientName: "Hiring Manager",
+    recipientRole: "Lead AI Engineer",
+    recipientCompany: "DataMatrix AI",
+    profile: "Lead AI Engineer hiring for the Junior AIML role. Focused on LLM latency optimization, vector deduplication, and production inference.",
+    goal: "Job Application / Interview Request",
+    tone: "Polite & Professional",
+    valueProp: "Cut cloud vector database compute costs by 52% with semantic deduplication",
+    customInstructions: "Highlight practical hands-on project and GitHub demo link"
+  },
+  {
+    label: "🤝 B2B Partnership",
+    senderName: "Alex Rivera",
+    senderRole: "Head of Technical Partnerships",
+    senderCompany: "VectorDB Labs",
+    recipientName: "Sarah Jenkins",
+    recipientRole: "VP of Engineering",
+    recipientCompany: "ScaleFlow Systems",
+    profile: "VP of Engineering @ ScaleFlow. Scaling microservices architecture from 50k to 2M DAU. Interested in developer tooling.",
+    goal: "Partnership / Strategic Collaboration",
     tone: "Value-First Exec",
-    valueProp: "Boost SDR meeting reply rates from 1.2% to 6.4% using trigger-based prospect research"
+    valueProp: "Cut incident MTTR by 45% via automated root-cause diagnosis",
+    customInstructions: "Low-friction 5-minute benchmark comparison"
   },
   {
-    label: "SaaS Founder & CEO",
-    name: "David Sterling",
-    company: "CloudVibe",
-    role: "Founder & CEO",
-    profile: "Founder & CEO at CloudVibe. Just raised $4M Seed round. Passionate about product-led growth and modern remote work productivity.",
+    label: "🚀 Founder Networking",
+    senderName: "David Sterling",
+    senderRole: "Founder & CEO",
+    senderCompany: "CloudVibe",
+    recipientName: "Mark Vance",
+    recipientRole: "Founder & CEO",
+    recipientCompany: "HyperGrowth Tech",
+    profile: "Founder at HyperGrowth Tech. Scaling outbound sales pipeline with a lean remote team.",
     goal: "Book a 15-min discovery call",
     tone: "Founder-to-Founder",
-    valueProp: "Help early-stage B2B founders double their demo bookings without hiring full-time SDRs"
+    valueProp: "Boost qualified meeting booking rates by 3.2x without extra SDR headcount",
+    customInstructions: "Peer founder collaboration"
   }
 ];
 
 export default function SingleOutreach({ onSaved }) {
+  // Sender (From) Details
+  const [senderName, setSenderName] = useState(SAMPLE_PERSONAS[0].senderName);
+  const [senderRole, setSenderRole] = useState(SAMPLE_PERSONAS[0].senderRole);
+  const [senderCompany, setSenderCompany] = useState(SAMPLE_PERSONAS[0].senderCompany);
+
+  // Recipient (To) Details
+  const [recipientName, setRecipientName] = useState(SAMPLE_PERSONAS[0].recipientName);
+  const [recipientRole, setRecipientRole] = useState(SAMPLE_PERSONAS[0].recipientRole);
+  const [recipientCompany, setRecipientCompany] = useState(SAMPLE_PERSONAS[0].recipientCompany);
   const [profileText, setProfileText] = useState(SAMPLE_PERSONAS[0].profile);
-  const [prospectName, setProspectName] = useState(SAMPLE_PERSONAS[0].name);
-  const [prospectCompany, setProspectCompany] = useState(SAMPLE_PERSONAS[0].company);
-  const [prospectRole, setProspectRole] = useState(SAMPLE_PERSONAS[0].role);
+
+  // Intent, Tone & Value Details
   const [tone, setTone] = useState(SAMPLE_PERSONAS[0].tone);
   const [goal, setGoal] = useState(SAMPLE_PERSONAS[0].goal);
   const [valueProp, setValueProp] = useState(SAMPLE_PERSONAS[0].valueProp);
-  const [customInstructions, setCustomInstructions] = useState('');
+  const [customInstructions, setCustomInstructions] = useState(SAMPLE_PERSONAS[0].customInstructions);
   const [enableWebResearch, setEnableWebResearch] = useState(true);
   const [enableRAG, setEnableRAG] = useState(true);
 
@@ -70,32 +106,51 @@ export default function SingleOutreach({ onSaved }) {
   const [result, setResult] = useState(null);
   const [copiedField, setCopiedField] = useState(null);
   const [activeResultTab, setActiveResultTab] = useState('email'); // email, followups, critic
+  const [variationCount, setVariationCount] = useState(1);
 
   const handleApplyPersona = (p) => {
+    setSenderName(p.senderName);
+    setSenderRole(p.senderRole);
+    setSenderCompany(p.senderCompany);
+    setRecipientName(p.recipientName);
+    setRecipientRole(p.recipientRole);
+    setRecipientCompany(p.recipientCompany);
     setProfileText(p.profile);
-    setProspectName(p.name);
-    setProspectCompany(p.company);
-    setProspectRole(p.role);
     setTone(p.tone);
     setGoal(p.goal);
     setValueProp(p.valueProp);
+    setCustomInstructions(p.customInstructions || '');
   };
 
-  const handleGenerate = async (e) => {
+  const handleGenerate = async (e, isVariation = false) => {
     if (e) e.preventDefault();
-    if (!profileText.trim()) return;
+    if (!profileText.trim() && !recipientName.trim()) return;
 
     setLoading(true);
     try {
+      const nextCount = isVariation ? variationCount + 1 : variationCount;
+      if (isVariation) setVariationCount(nextCount);
+
+      const instructions = isVariation 
+        ? `${customInstructions ? customInstructions + '\n' : ''}[Variation Request #${nextCount}: Generate a completely distinct hook, fresh perspective, and alternative subject lines]`.trim()
+        : customInstructions;
+
       const data = await api.generateOutreach({
+        sender_name: senderName,
+        sender_role: senderRole,
+        sender_company: senderCompany,
+        recipient_name: recipientName,
+        recipient_role: recipientRole,
+        recipient_company: recipientCompany,
+        prospect_name: recipientName,
+        prospect_company: recipientCompany,
+        prospect_role: recipientRole,
         profile_text: profileText,
-        prospect_name: prospectName,
-        prospect_company: prospectCompany,
-        prospect_role: prospectRole,
         tone: tone,
         goal: goal,
         value_proposition: valueProp,
-        custom_instructions: customInstructions,
+        custom_instructions: instructions,
+        variation_count: nextCount,
         enable_web_research: enableWebResearch,
         enable_rag: enableRAG
       });
@@ -105,6 +160,12 @@ export default function SingleOutreach({ onSaved }) {
       alert(`Generation failed: ${err.message}`);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSelectSubject = (sub) => {
+    if (result) {
+      setResult({ ...result, selected_subject: sub });
     }
   };
 
@@ -125,13 +186,13 @@ export default function SingleOutreach({ onSaved }) {
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
               <ShieldCheck className="w-3.5 h-3.5" />
-              100% Anti-AI Persona Engine • Claude 3.5 Sonnet
+              100% Anti-AI Persona Engine • Mistral AI
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
               Paste a Profile. Get an Email That <span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">Does Not Sound AI-Generated</span>.
             </h1>
             <p className="text-sm text-slate-400 max-w-2xl">
-              Eliminates sycophantic AI fluff, robot buzzwords, and template clichés. Crafted with human conversational cadence, high-context hooks, and low-friction CTAs.
+              Clean separation of <strong>Sender (From)</strong> and <strong>Recipient (To)</strong>. Eliminates sycophantic AI fluff, robot buzzwords, and template clichés with human conversational cadence.
             </p>
           </div>
 
@@ -139,7 +200,7 @@ export default function SingleOutreach({ onSaved }) {
           <div className="bg-slate-900/90 border border-slate-800 p-3.5 rounded-xl flex flex-col gap-2 min-w-[240px]">
             <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-              Try Instant Sample Profile:
+              Try Instant Sample Setup:
             </span>
             <div className="flex flex-col gap-1.5">
               {SAMPLE_PERSONAS.map((p, idx) => (
@@ -162,106 +223,192 @@ export default function SingleOutreach({ onSaved }) {
         {/* Left Column: Form (5 Cols) */}
         <div className="lg:col-span-5 space-y-6">
           <form onSubmit={handleGenerate} className="glass-panel p-6 rounded-2xl space-y-5">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <h2 className="text-base font-bold text-white flex items-center gap-2">
-                <User className="w-4 h-4 text-emerald-400" />
-                Prospect Intelligence
-              </h2>
-              <span className="text-xs text-slate-400">Step 1 of 2</span>
-            </div>
-
-            {/* Profile / Bio Input */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300 flex items-center justify-between">
-                <span>Prospect Profile, Bio or LinkedIn Dump *</span>
-                <span className="text-[10px] text-slate-500 font-mono">Unstructured Text OK</span>
-              </label>
-              <textarea
-                value={profileText}
-                onChange={(e) => setProfileText(e.target.value)}
-                rows={4}
-                className="w-full rounded-xl bg-slate-900/90 border border-slate-700/80 px-3.5 py-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition resize-none font-sans"
-                placeholder="Paste prospect bio, LinkedIn summary, recent post, or job responsibilities..."
-                required
-              />
-            </div>
-
-            {/* Quick Metadata Fields */}
-            <div className="grid grid-cols-3 gap-3">
-              <div>
-                <label className="text-[11px] font-medium text-slate-400">Name (Optional)</label>
-                <input
-                  type="text"
-                  value={prospectName}
-                  onChange={(e) => setProspectName(e.target.value)}
-                  placeholder="e.g. Alex"
-                  className="w-full rounded-lg bg-slate-900/90 border border-slate-700/80 px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
-                />
+            
+            {/* 1. FROM (Sender / You) */}
+            <div className="p-4 rounded-xl bg-slate-900/90 border border-slate-700/60 space-y-3">
+              <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+                <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <UserCheck className="w-4 h-4" />
+                  1. FROM (Sender / Your Details)
+                </span>
+                <span className="text-[10px] text-slate-400">Used for email sign-off</span>
               </div>
-              <div>
-                <label className="text-[11px] font-medium text-slate-400">Company</label>
-                <input
-                  type="text"
-                  value={prospectCompany}
-                  onChange={(e) => setProspectCompany(e.target.value)}
-                  placeholder="e.g. DataMatrix"
-                  className="w-full rounded-lg bg-slate-900/90 border border-slate-700/80 px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
-                />
-              </div>
-              <div>
-                <label className="text-[11px] font-medium text-slate-400">Role / Title</label>
-                <input
-                  type="text"
-                  value={prospectRole}
-                  onChange={(e) => setProspectRole(e.target.value)}
-                  placeholder="e.g. VP Eng"
-                  className="w-full rounded-lg bg-slate-900/90 border border-slate-700/80 px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                <div>
+                  <label className="text-[11px] font-medium text-slate-300">Your Full Name *</label>
+                  <input
+                    type="text"
+                    value={senderName}
+                    onChange={(e) => setSenderName(e.target.value)}
+                    placeholder="e.g. Mohammed Salman"
+                    className="mt-1 w-full rounded-lg bg-slate-950 border border-slate-700 px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] font-medium text-slate-300">Your Role / Title</label>
+                  <input
+                    type="text"
+                    value={senderRole}
+                    onChange={(e) => setSenderRole(e.target.value)}
+                    placeholder="e.g. B.Tech Student / AIML"
+                    className="mt-1 w-full rounded-lg bg-slate-950 border border-slate-700 px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] font-medium text-slate-300">Your Org / College</label>
+                  <input
+                    type="text"
+                    value={senderCompany}
+                    onChange={(e) => setSenderCompany(e.target.value)}
+                    placeholder="e.g. Crescent Institute"
+                    className="mt-1 w-full rounded-lg bg-slate-950 border border-slate-700 px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
+                  />
+                </div>
               </div>
             </div>
 
-            {/* Tone Selector */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300">Outreach Tone</label>
-              <select
-                value={tone}
-                onChange={(e) => setTone(e.target.value)}
-                className="w-full rounded-xl bg-slate-900/90 border border-slate-700/80 px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
-              >
-                <option value="Casual & Direct">Casual & Direct (Short, peer-to-peer, punchy)</option>
-                <option value="Value-First Exec">Value-First Exec (Quantified metrics, high ROI focus)</option>
-                <option value="Founder-to-Founder">Founder-to-Founder (Relatable, startup struggle hook)</option>
-                <option value="Curious Problem-Solver">Curious Problem-Solver (Insightful observation question)</option>
-                <option value="Ultra-Concise">Ultra-Concise (&lt;60 words, quick loom pitch)</option>
-              </select>
+            {/* 2. TO (Recipient Details) */}
+            <div className="p-4 rounded-xl bg-slate-900/90 border border-slate-700/60 space-y-3">
+              <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+                <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <Target className="w-4 h-4" />
+                  2. TO (Recipient / Prospect / Professor)
+                </span>
+                <span className="text-[10px] text-slate-400">Used for greeting & hook</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                <div>
+                  <label className="text-[11px] font-medium text-slate-300">Recipient Name</label>
+                  <input
+                    type="text"
+                    value={recipientName}
+                    onChange={(e) => setRecipientName(e.target.value)}
+                    placeholder="e.g. Dr. Sharma / Sarah"
+                    className="mt-1 w-full rounded-lg bg-slate-950 border border-slate-700 px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] font-medium text-slate-300">Recipient Role</label>
+                  <input
+                    type="text"
+                    value={recipientRole}
+                    onChange={(e) => setRecipientRole(e.target.value)}
+                    placeholder="e.g. HOD / Lead AI Engineer"
+                    className="mt-1 w-full rounded-lg bg-slate-950 border border-slate-700 px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] font-medium text-slate-300">Recipient Org / Univ</label>
+                  <input
+                    type="text"
+                    value={recipientCompany}
+                    onChange={(e) => setRecipientCompany(e.target.value)}
+                    placeholder="e.g. Crescent / DataMatrix"
+                    className="mt-1 w-full rounded-lg bg-slate-950 border border-slate-700 px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+              </div>
+
+              {/* Recipient Profile / Bio */}
+              <div className="space-y-1 pt-1">
+                <label className="text-[11px] font-medium text-slate-300 flex items-center justify-between">
+                  <span>Recipient Profile, Bio or Context Notes *</span>
+                  <span className="text-[10px] text-slate-500 font-mono">Unstructured Text OK</span>
+                </label>
+                <textarea
+                  value={profileText}
+                  onChange={(e) => setProfileText(e.target.value)}
+                  rows={3}
+                  className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition resize-none font-sans"
+                  placeholder="Paste LinkedIn bio, department summary, job requirements, or background..."
+                  required
+                />
+              </div>
             </div>
 
-            {/* Goal Selector */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300">Outreach Goal</label>
-              <select
-                value={goal}
-                onChange={(e) => setGoal(e.target.value)}
-                className="w-full rounded-xl bg-slate-900/90 border border-slate-700/80 px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
-              >
-                <option value="Book a 15-min discovery call">Book a 15-min discovery call</option>
-                <option value="Product Demo">Show a quick 2-min interactive product demo</option>
-                <option value="Partnership Pitch">Partnership / Strategic Collaboration</option>
-                <option value="Feedback on tool">Get feedback on a new open-source or B2B tool</option>
-                <option value="Follow-up on recent post">Comment on their recent blog / LinkedIn post</option>
-              </select>
-            </div>
+            {/* 3. PURPOSE, GOAL & TONE */}
+            <div className="space-y-3 pt-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {/* Tone Selector */}
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-slate-300">Email Tone</label>
+                  <select
+                    value={tone}
+                    onChange={(e) => setTone(e.target.value)}
+                    className="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
+                  >
+                    <optgroup label="Academic & Formal">
+                      <option value="Formal & Respectful">Formal & Respectful (Professors, Management, HR)</option>
+                      <option value="Polite & Professional">Polite & Professional (Job Applications, Career Outreach)</option>
+                    </optgroup>
+                    <optgroup label="Modern Outbound & Networking">
+                      <option value="Casual & Direct">Casual & Direct (Short, peer-to-peer, punchy)</option>
+                      <option value="Value-First Exec">Value-First Exec (Quantified metrics, high ROI focus)</option>
+                      <option value="Founder-to-Founder">Founder-to-Founder (Relatable startup collaboration)</option>
+                      <option value="Curious Problem-Solver">Curious Problem-Solver (Insightful observation)</option>
+                      <option value="Ultra-Concise">Ultra-Concise (&lt;60 words, quick note)</option>
+                    </optgroup>
+                  </select>
+                </div>
 
-            {/* Value Proposition / Offer */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300">Our Value Proposition / Specific Proof Point</label>
-              <input
-                type="text"
-                value={valueProp}
-                onChange={(e) => setValueProp(e.target.value)}
-                placeholder="e.g. Cut cloud database spend by 52% with semantic caching"
-                className="w-full rounded-xl bg-slate-900/90 border border-slate-700/80 px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
-              />
+                {/* Goal Selector */}
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-slate-300">Email Goal / Intent</label>
+                  <select
+                    value={goal}
+                    onChange={(e) => setGoal(e.target.value)}
+                    className="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
+                  >
+                    <optgroup label="🎓 Student & Academic">
+                      <option value="Leave Application / Permission">Leave Application / Permission (Sick / Urgent / Family)</option>
+                      <option value="Request Letter of Recommendation">Request Letter of Recommendation (LOR / Reference)</option>
+                      <option value="Internship Application / Inquiry">Internship Application / Academic Project Inquiry</option>
+                      <option value="Academic Admin Query">Fee / Exam / Admin Query to College</option>
+                    </optgroup>
+                    <optgroup label="💼 Job Seeker & Career">
+                      <option value="Job Application / Interview Request">Job Application / Interview Request</option>
+                      <option value="Cold Networking with Recruiter">Cold Networking with Hiring Manager / Recruiter</option>
+                      <option value="Interview Follow-up & Thank You">Interview Follow-up & Thank You</option>
+                    </optgroup>
+                    <optgroup label="🤝 Business, Outbound & Networking">
+                      <option value="Partnership / Strategic Collaboration">Partnership / Strategic Collaboration</option>
+                      <option value="Book a 15-min discovery call">Book a 15-min discovery call</option>
+                      <option value="Product Demo">Show a quick 2-min interactive product demo</option>
+                      <option value="Feedback on tool">Get feedback on a new open-source or B2B tool</option>
+                      <option value="Quick Question">Quick professional question re: workflow</option>
+                    </optgroup>
+                  </select>
+                </div>
+              </div>
+
+              {/* Value Proposition / Offer */}
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-300">
+                  Key Reason / Value Proposition / Proof Point
+                </label>
+                <input
+                  type="text"
+                  value={valueProp}
+                  onChange={(e) => setValueProp(e.target.value)}
+                  placeholder="e.g. Viral fever from Oct 12-15 or Cut cloud database spend by 52%"
+                  className="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+
+              {/* Custom Instructions (e.g. Roll number, links) */}
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-300">
+                  Additional Notes / Specific Instructions (Optional)
+                </label>
+                <input
+                  type="text"
+                  value={customInstructions}
+                  onChange={(e) => setCustomInstructions(e.target.value)}
+                  placeholder="e.g. Student Roll No: CS-2024-88 or Include GitHub portfolio link"
+                  className="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
+                />
+              </div>
             </div>
 
             {/* Multi-Agent Toggles */}
@@ -306,12 +453,12 @@ export default function SingleOutreach({ onSaved }) {
               {loading ? (
                 <>
                   <RefreshCw className="w-4 h-4 animate-spin text-emerald-400" />
-                  <span>LangGraph Agents Working (Research, RAG, Claude, Critic)...</span>
+                  <span>Generating Persona-Aware Email with Mistral AI...</span>
                 </>
               ) : (
                 <>
                   <Sparkles className="w-4 h-4" />
-                  <span>Generate Anti-AI Cold Outreach</span>
+                  <span>Generate Anti-AI Email ({senderName || 'Sender'} ➔ {recipientName || 'Recipient'})</span>
                 </>
               )}
             </button>
@@ -348,7 +495,7 @@ export default function SingleOutreach({ onSaved }) {
                         : 'text-slate-400 hover:text-white'
                     }`}
                   >
-                    Cold Email
+                    Email Output
                   </button>
                   <button
                     onClick={() => setActiveResultTab('followups')}
@@ -375,29 +522,53 @@ export default function SingleOutreach({ onSaved }) {
 
               {/* Subject Lines Selector */}
               <div className="space-y-2">
-                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <Mail className="w-3.5 h-3.5 text-emerald-400" />
-                  Subject Line Options (A/B Test Hooks):
-                </span>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                    <Mail className="w-3.5 h-3.5 text-emerald-400" />
+                    Subject Line Options (Click to Select):
+                  </span>
+                  <span className="text-[10px] text-emerald-400 font-mono">Active: {result.selected_subject ? 'Selected' : 'A'}</span>
+                </div>
                 <div className="space-y-1.5">
-                  {(result.subject_lines || [result.selected_subject]).map((sub, i) => (
-                    <div
-                      key={i}
-                      className="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-xs text-slate-200 hover:border-slate-700 transition"
-                    >
-                      <span className="font-mono text-emerald-300">
-                        <span className="text-slate-500 mr-2">[{String.fromCharCode(65 + i)}]</span>
-                        {sub}
-                      </span>
-                      <button
-                        onClick={() => copyToClipboard(sub, `sub_${i}`)}
-                        className="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-emerald-400 transition"
-                        title="Copy Subject"
+                  {(result.subject_lines || [result.selected_subject]).map((sub, i) => {
+                    const isSelected = result.selected_subject === sub || (!result.selected_subject && i === 0);
+                    return (
+                      <div
+                        key={i}
+                        onClick={() => handleSelectSubject(sub)}
+                        className={`cursor-pointer flex items-center justify-between p-2.5 rounded-lg border text-xs transition ${
+                          isSelected
+                            ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300 ring-1 ring-emerald-500/30 shadow-sm'
+                            : 'bg-slate-900/80 border-slate-800 text-slate-300 hover:border-slate-700 hover:bg-slate-800/50'
+                        }`}
                       >
-                        {copiedField === `sub_${i}` ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                      </button>
-                    </div>
-                  ))}
+                        <div className="flex items-center gap-2 overflow-hidden">
+                          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                            isSelected ? 'bg-emerald-500/30 text-emerald-200' : 'bg-slate-800 text-slate-400'
+                          }`}>
+                            Option {String.fromCharCode(65 + i)}
+                          </span>
+                          <span className="font-medium truncate">{sub}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          {isSelected && (
+                            <span className="text-[10px] font-semibold text-emerald-400 mr-1 hidden sm:inline">Active</span>
+                          )}
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              copyToClipboard(sub, `sub_${i}`);
+                            }}
+                            className="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-emerald-400 transition"
+                            title="Copy Subject"
+                          >
+                            {copiedField === `sub_${i}` ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -405,23 +576,31 @@ export default function SingleOutreach({ onSaved }) {
               {activeResultTab === 'email' && (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-slate-400">Copy-Ready Email Body:</span>
-                    <button
-                      onClick={() => copyToClipboard(`Subject: ${result.selected_subject}\n\n${result.email_body}`, 'full_email')}
-                      className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold transition"
-                    >
-                      {copiedField === 'full_email' ? (
-                        <>
-                          <Check className="w-3.5 h-3.5" />
-                          <span>Copied to Clipboard!</span>
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-3.5 h-3.5" />
-                          <span>Copy Full Email</span>
-                        </>
-                      )}
-                    </button>
+                    <span className="text-xs font-semibold text-slate-400">Copy-Ready Email Output:</span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => copyToClipboard(`Subject: ${result.selected_subject || result.subject_lines?.[0] || ''}\n\n${result.email_body}`, 'full_email')}
+                        className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold transition"
+                      >
+                        {copiedField === 'full_email' ? (
+                          <>
+                            <Check className="w-3.5 h-3.5" />
+                            <span>Copied (Subject + Body)!</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3.5 h-3.5" />
+                            <span>Copy Subject + Body</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Subject Display Preview */}
+                  <div className="rounded-xl bg-slate-900 border border-slate-800 p-3 flex items-center gap-2 text-xs">
+                    <span className="font-bold text-slate-400 uppercase text-[10px]">Subject:</span>
+                    <span className="font-mono text-emerald-300 font-semibold">{result.selected_subject || result.subject_lines?.[0]}</span>
                   </div>
 
                   <div className="relative rounded-xl bg-slate-950/80 border border-slate-800 p-4 font-sans text-xs sm:text-sm text-slate-200 leading-relaxed whitespace-pre-wrap selection:bg-emerald-500/30">
@@ -522,12 +701,12 @@ export default function SingleOutreach({ onSaved }) {
               <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
                 <span className="text-xs text-slate-500">Need a different angle?</span>
                 <button
-                  onClick={() => handleGenerate()}
+                  onClick={() => handleGenerate(null, true)}
                   disabled={loading}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition"
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold transition"
                 >
-                  <RefreshCw className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>Generate New Variation</span>
+                  <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+                  <span>Generate New Variation (#{variationCount})</span>
                 </button>
               </div>
             </div>
@@ -539,7 +718,7 @@ export default function SingleOutreach({ onSaved }) {
               <div className="space-y-1 max-w-sm">
                 <h3 className="text-base font-bold text-slate-200">Ready to Personalize</h3>
                 <p className="text-xs text-slate-400">
-                  Select a sample profile or paste any prospect information on the left and click Generate to see the Anti-AI outreach sequence.
+                  Select a sample profile or fill in your details (From) and your recipient (To) on the left to see the Anti-AI email output.
                 </p>
               </div>
             </div>

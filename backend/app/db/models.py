@@ -27,14 +27,28 @@ class TokenData(BaseModel):
     email: Optional[str] = None
 
 class ProspectInput(BaseModel):
-    profile_text: str = Field(..., description="LinkedIn bio, prospect bio, job description, or company notes")
+    # Sender / From Details
+    sender_name: Optional[str] = Field(default="", description="Your name (e.g. Mohammed Salman, Alex Rivera)")
+    sender_role: Optional[str] = Field(default="", description="Your role or title (e.g. AIML Student, SDR, Founder)")
+    sender_company: Optional[str] = Field(default="", description="Your institution or company (e.g. Crescent Institute, Acme Corp)")
+    
+    # Recipient / To Details
+    recipient_name: Optional[str] = Field(default="", description="Recipient / Prospect / Professor / Lead name")
+    recipient_role: Optional[str] = Field(default="", description="Recipient title or role (e.g. HOD, VP Engineering)")
+    recipient_company: Optional[str] = Field(default="", description="Recipient organization or institution")
+    
+    # Backward compatibility aliases
     prospect_name: Optional[str] = ""
     prospect_company: Optional[str] = ""
     prospect_role: Optional[str] = ""
-    tone: str = Field(default="Casual & Direct", description="Casual & Direct, Value-First Exec, Founder-to-Founder, Curious Problem-Solver, Ultra-Concise")
-    goal: str = Field(default="Book a 15-min discovery call", description="Call, partnership, demo, feedback, etc.")
+
+    # Context, Goal & Tone
+    profile_text: str = Field(..., description="Recipient background, job description, LinkedIn bio, or notes")
+    tone: str = Field(default="Casual & Direct", description="Casual & Direct, Value-First Exec, Formal & Respectful, etc.")
+    goal: str = Field(default="Book a 15-min discovery call", description="Call, leave letter, interview, partnership, etc.")
     value_proposition: Optional[str] = ""
     custom_instructions: Optional[str] = ""
+    variation_count: Optional[int] = Field(default=1, description="Variation sequence index for unique angles")
     enable_web_research: bool = True
     enable_rag: bool = True
 
@@ -50,6 +64,12 @@ class SingleEmailResult(BaseModel):
     id: Optional[str] = None
     user_id: Optional[str] = "guest"
     created_at: datetime = Field(default_factory=datetime.utcnow)
+    sender_name: str = ""
+    sender_role: str = ""
+    sender_company: str = ""
+    recipient_name: str = ""
+    recipient_company: str = ""
+    recipient_role: str = ""
     prospect_name: str = ""
     prospect_company: str = ""
     prospect_role: str = ""

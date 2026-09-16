@@ -102,6 +102,6 @@ async def run_langsmith_evaluation_suite() -> Dict[str, Any]:
         "benchmark_count": len(BENCHMARK_PROSPECTS),
         "average_anti_ai_score": avg_score,
         "average_latency_seconds": avg_latency,
-        "model_evaluated": settings.ANTHROPIC_MODEL,
+        "model_evaluated": settings.MISTRAL_MODEL,
         "results": results
     }

@@ -47,28 +47,24 @@ export default function LangSmithEval() {
             LangSmith Observability & Benchmarking
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 max-w-2xl">
-            Evaluate Anti-AI cold outreach across standardized golden datasets. Tracks latency, cliché suppression, Flesch reading score, and Claude generation metrics.
+            Evaluate Anti-AI cold outreach across standardized golden datasets. Tracks latency, cliché suppression, Flesch reading score, and Mistral generation metrics.
           </p>
         </div>
 
         <button
           onClick={handleRunSuite}
           disabled={running}
-          className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs shadow-lg transition-all ${
-            running
-              ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
-              : 'bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-white shadow-emerald-500/25 glow-emerald'
-          }`}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-xs bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white shadow-lg shadow-emerald-500/20 disabled:opacity-50 transition"
         >
           {running ? (
             <>
               <RefreshCw className="w-4 h-4 animate-spin" />
-              <span>Running Evaluation Suite...</span>
+              <span>Evaluating Benchmark Set...</span>
             </>
           ) : (
             <>
-              <Play className="w-4 h-4 fill-current" />
-              <span>Run LangSmith Benchmark Suite</span>
+              <Play className="w-4 h-4" />
+              <span>Run Benchmark Suite</span>
             </>
           )}
         </button>
@@ -98,7 +94,7 @@ export default function LangSmithEval() {
             AI Architecture
           </span>
           <div className="text-sm font-bold text-white">
-            {evalStatus?.model || "Claude 3.5 Sonnet"}
+            {evalStatus?.model || "mistral-small-latest"}
           </div>
           <p className="text-[11px] text-slate-400">
             Supervisor + Research + RAG + Critic Graph

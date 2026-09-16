@@ -47,7 +47,7 @@ async def rag_agent_node(state: OutreachState) -> Dict[str, Any]:
     }
 
 async def copywriter_agent_node(state: OutreachState) -> Dict[str, Any]:
-    """Generates the Anti-AI cold email and follow-up sequence with Claude."""
+    """Generates the Anti-AI cold email and follow-up sequence with Mistral AI / dynamic engine."""
     loop = asyncio.get_event_loop()
     result = await loop.run_in_executor(
         None,
@@ -61,7 +61,14 @@ async def copywriter_agent_node(state: OutreachState) -> Dict[str, Any]:
         state.get("value_proposition", ""),
         state.get("research_summary", ""),
         state.get("rag_context", []),
-        state.get("custom_instructions", "")
+        state.get("custom_instructions", ""),
+        state.get("sender_name", ""),
+        state.get("sender_role", ""),
+        state.get("sender_company", ""),
+        state.get("recipient_name", "") or state.get("prospect_name", ""),
+        state.get("recipient_company", "") or state.get("prospect_company", ""),
+        state.get("recipient_role", "") or state.get("prospect_role", ""),
+        state.get("variation_count", 1)
     )
 
     return {

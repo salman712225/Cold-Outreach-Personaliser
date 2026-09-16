@@ -40,7 +40,7 @@ export default function Navbar({ activeTab, setActiveTab, systemStatus, onOpenSe
                   Anti-AI Engine
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400">Claude 3.5 Sonnet • LangGraph Multi-Agent • RAG</p>
+              <p className="text-[11px] text-slate-400">Mistral AI • LangGraph Multi-Agent • RAG</p>
             </div>
           </div>
 
@@ -80,7 +80,7 @@ export default function Navbar({ activeTab, setActiveTab, systemStatus, onOpenSe
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
               </span>
               <span className="text-[11px] text-slate-300 font-mono">
-                {systemStatus?.model ? 'Claude 3.5 Ready' : 'Engine Ready'}
+                {systemStatus?.model ? 'Mistral AI Ready' : 'Engine Ready'}
               </span>
             </div>
 

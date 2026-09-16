@@ -1,0 +1,43 @@
+services:
+  # Backend Web Service (FastAPI)
+  - type: web
+    name: cold-outreach-backend
+    env: python
+    region: oregon
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: MISTRAL_API_KEY
+        sync: false
+      - key: MISTRAL_MODEL
+        value: mistral-small-latest
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DB_NAME
+        value: cold_outreach_db
+      - key: JWT_SECRET
+        generateValue: true
+      - key: LANGCHAIN_TRACING_V2
+        value: "false"
+
+  # Frontend Static Site (Vite React)
+  - type: web
+    name: cold-outreach-frontend
+    env: static
+    region: oregon
+    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_BASE_URL
+        fromService:
+          type: web
+          name: cold-outreach-backend
+          property: host

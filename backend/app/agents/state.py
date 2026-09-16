@@ -1,15 +1,26 @@
 from typing import TypedDict, List, Dict, Any, Optional
 
 class OutreachState(TypedDict):
-    # Input
-    profile_text: str
+    # Sender / From Details
+    sender_name: str
+    sender_role: str
+    sender_company: str
+
+    # Recipient / To Details
+    recipient_name: str
+    recipient_company: str
+    recipient_role: str
     prospect_name: str
     prospect_company: str
     prospect_role: str
+
+    # Context, Goal & Settings
+    profile_text: str
     tone: str
     goal: str
     value_proposition: str
     custom_instructions: str
+    variation_count: int
     enable_web_research: bool
     enable_rag: bool
 

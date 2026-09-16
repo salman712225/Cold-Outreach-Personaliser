@@ -39,22 +39,7 @@ def search_company_or_prospect(query: str, max_results: int = 3) -> str:
     if not query.strip():
         return ""
     
-    # 1. If Tavily API Key is provided, use Tavily
-    if settings.TAVILY_API_KEY:
-        try:
-            with httpx.Client(timeout=6.0) as client:
-                res = client.post(
-                    "https://api.tavily.com/search",
-                    json={"api_key": settings.TAVILY_API_KEY, "query": query, "max_results": max_results}
-                )
-                if res.status_code == 200:
-                    data = res.json()
-                    results = [f"- {r.get('title')}: {r.get('content')}" for r in data.get("results", [])]
-                    return "\n".join(results)
-        except Exception as e:
-            logger.warning(f"Tavily search error: {e}")
-
-    # 2. Pure-Python DuckDuckGo HTML / Instant search fallback with httpx
+    # Pure-Python DuckDuckGo HTML / Instant search with httpx (No API key needed)
     try:
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"

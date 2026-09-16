@@ -71,8 +71,9 @@ graph TD
 Create a `.env` file in the root and `/backend` directory (see `.env.example`):
 
 ```env
-# Anthropic Claude API Key (Required for live Claude generation)
-ANTHROPIC_API_KEY=sk-ant-api03-...
+# Mistral AI API Key & Model
+MISTRAL_API_KEY=your_mistral_api_key_here
+MISTRAL_MODEL=mistral-large-latest
 
 # LangSmith Observability & Evaluation Tracing (Optional / Recommended)
 LANGCHAIN_TRACING_V2=true
@@ -80,15 +81,9 @@ LANGCHAIN_API_KEY=lsv2_pt_...
 LANGCHAIN_PROJECT=cold-outreach-personaliser
 LANGCHAIN_ENDPOINT=https://api.smith.langchain.com
 
-# Model Selection
-ANTHROPIC_MODEL=claude-3-5-sonnet-20241022
-
-# MongoDB Connection (Auto-falls back to persistent local storage if offline)
-MONGODB_URI=mongodb://localhost:27017
+# MongoDB Connection (Atlas Cloud or Localhost)
+MONGODB_URI=mongodb+srv://...
 MONGODB_DB_NAME=cold_outreach_db
-
-# Web Search Enrichment (Optional)
-TAVILY_API_KEY=
 
 # Security & Authentication
 JWT_SECRET=your_super_secret_jwt_key_here

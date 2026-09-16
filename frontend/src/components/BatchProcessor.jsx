@@ -311,19 +311,51 @@ export default function BatchProcessor() {
                 <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-emerald-400">
-                      Preview for {selectedRow.name} ({selectedRow.company}):
+                      Prospect Preview: {selectedRow.name} ({selectedRow.company || 'Company'})
                     </span>
                     <button
-                      onClick={() => navigator.clipboard.writeText(selectedRow.generated_email)}
-                      className="text-xs text-slate-400 hover:text-emerald-400 flex items-center gap-1"
+                      onClick={() => {
+                        const fullText = `Subject: ${selectedRow.generated_subject || ''}\n\n${selectedRow.generated_email}`;
+                        navigator.clipboard.writeText(fullText);
+                        alert(`Copied email for ${selectedRow.name}!`);
+                      }}
+                      className="px-2.5 py-1 rounded bg-emerald-500/10 hover:bg-emerald-500/20 text-xs text-emerald-400 border border-emerald-500/30 flex items-center gap-1 font-semibold transition"
                     >
                       <Copy className="w-3.5 h-3.5" />
-                      <span>Copy</span>
+                      <span>Copy Full Email</span>
                     </button>
                   </div>
-                  <div className="text-xs text-slate-200 whitespace-pre-wrap bg-slate-950 p-3 rounded-lg font-sans">
+
+                  {selectedRow.generated_subject && (
+                    <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-xs">
+                      <span className="font-bold text-slate-400 uppercase text-[10px] mr-2">Subject:</span>
+                      <span className="font-mono text-emerald-300 font-semibold">{selectedRow.generated_subject}</span>
+                    </div>
+                  )}
+
+                  <div className="text-xs text-slate-200 whitespace-pre-wrap bg-slate-950 p-3.5 rounded-lg font-sans leading-relaxed border border-slate-800">
                     {selectedRow.generated_email}
                   </div>
+
+                  {selectedRow.generated_followup_1 && (
+                    <details className="text-xs text-slate-300">
+                      <summary className="cursor-pointer font-bold text-cyan-400 hover:underline">
+                        View Follow-Up Sequence (Day 3 & Day 7)
+                      </summary>
+                      <div className="mt-2 space-y-2">
+                        <div className="p-2.5 bg-slate-950 rounded border border-slate-800">
+                          <span className="text-[10px] font-bold text-cyan-400 block mb-1">Follow-Up #1 (Day 3):</span>
+                          <p className="whitespace-pre-wrap">{selectedRow.generated_followup_1}</p>
+                        </div>
+                        {selectedRow.generated_followup_2 && (
+                          <div className="p-2.5 bg-slate-950 rounded border border-slate-800">
+                            <span className="text-[10px] font-bold text-slate-400 block mb-1">Follow-Up #2 (Day 7 Breakup):</span>
+                            <p className="whitespace-pre-wrap">{selectedRow.generated_followup_2}</p>
+                          </div>
+                        )}
+                      </div>
+                    </details>
+                  )}
                 </div>
               )}
             </div>

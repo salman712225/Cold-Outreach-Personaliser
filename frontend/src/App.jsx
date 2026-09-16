@@ -45,7 +45,7 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p>© 2026 ColdReach.ai — Anti-AI Cold Outreach Personaliser</p>
           <div className="flex items-center gap-4 text-[11px] text-slate-400">
-            <span>Anthropic Claude API</span>
+            <span>Mistral AI API</span>
             <span>•</span>
             <span>LangGraph Multi-Agent</span>
             <span>•</span>
